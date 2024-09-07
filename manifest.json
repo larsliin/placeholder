@@ -1,8 +1,8 @@
 {
 	"manifest_version": 3,
-	"name": "My Shortcuts Tab",
+	"name": "Placeholder",
 	"version": "1.0",
-	"description": "Customize your new tab: organize bookmarks, access favorites instantly, and rearrange with drag-and-drop ease.",
+	"description": "Placeholder",
 	"permissions": [
 		"bookmarks",
 		"storage",

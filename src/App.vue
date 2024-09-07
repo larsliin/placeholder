@@ -1,11 +1,9 @@
 <template>
-    <BookmarksToolbar v-if="bookmarksStore.bookmarks" />
-    <BookmarksContainer />
+    <PlaceholderView />
 </template>
 
 <script setup>
-    import Compnent from '@/components/component.vue';
-    
+    import PlaceholderView from '@/views/PlaceholderView.vue';
 </script>
 
 <style>
