@@ -14,7 +14,7 @@
                     v-model="backgroundColor"
                     hide-sliders
                     hide-canvas
-                    :swatches="swatches"
+                    :swatches="PLACEHOLDER.CANVAS.swatches"
                     show-swatches
                     :rounded="true"
                     width="100"
@@ -51,20 +51,13 @@
 
 <script setup>
     import { onMounted, ref, watch } from 'vue';
-    import { PLACEHOLDER_IMAGE } from '@/constants';
+    import { PLACEHOLDER } from '@/constants';
+    import useColors from '@cmp/colors';
 
-    const swatches = [
-        ['#ffcb0e', '#f5e70c', '#f0ea22', '#c0d62f', '#FFFFFF'],
-        ['#89c541', '#46b749', '#24af4b', '#2ab567', '#D3D3D3'],
-        ['#10a1c5', '#197fbe', '#1c60ad', '#294b9f', '#808080'],
-        ['#263a94', '#373491', '#613191', '#9f3c96', '#555555'],
-        ['#c21b79', '#e71b4c', '#ed2227', '#ee3824', '#333333'],
-        ['#f26324', '#f57a20', '#f79020', '#faac1a', '#000000'],
-    ];
-    const backgroundColor = ref(swatches[0][0]);
+    const backgroundColor = ref(PLACEHOLDER.CANVAS.swatches[0][0]);
 
-    const canvasWidth = ref(300);
-    const canvasHeight = ref(250);
+    const canvasWidth = ref(PLACEHOLDER.CANVAS.width);
+    const canvasHeight = ref(PLACEHOLDER.CANVAS.height);
     const canvas = ref(null);
 
     function onButtonClick() {
@@ -102,34 +95,30 @@
 
         return { width, height };
     }
-    const img = ref(null);
+    const imgBlack = ref(null);
+    const imgWhite = ref(null);
 
-    const scale = ref(1);
+    const colors = useColors();
 
-    const canvasContainer = ref();
     function drawCanvas() {
         const ctx = canvas.value.getContext('2d');
 
         canvas.value.width = canvasWidth.value;
         canvas.value.height = canvasHeight.value;
 
-        // console.log(canvasWidth.value / canvasContainer.value.clientWidth);
-
-        // const overflow = canvasWidth.value / canvasContainer.value.clientWidth;
-        // if (overflow > 1) {
-        //     scale.value = 1 - (overflow - 1);
-        // }
-
         // Fill the entire canvas with the dynamic background color
         ctx.fillStyle = backgroundColor.value;
         ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
 
-        if (img.value) {
-            const dims = getImageDims(img.value);
+        const image = colors.isHexBelow50Percent(backgroundColor.value)
+            ? imgWhite.value : imgBlack.value;
+
+        if (image) {
+            const dims = getImageDims(image);
             const x = (canvasWidth.value - dims.width) / 2;
             const y = (canvasHeight.value - dims.height) / 2;
 
-            ctx.drawImage(img.value, x, y, dims.width, dims.height);
+            ctx.drawImage(image, x, y, dims.width, dims.height);
         }
     }
 
@@ -150,17 +139,38 @@
         drawCanvas();
     });
 
-    onMounted(() => {
-        // Load the image only once during the component's lifecycle
-        img.value = new Image();
-        img.value.src = PLACEHOLDER_IMAGE.CANVAS.imagePath; // Replace with your image path
+    // Function to create a promise that resolves when an image is loaded
+    const loadImage = (src) => new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (error) => reject(error);
+        img.src = src;
+    });
 
-        // When the image loads, draw it for the first time
-        img.value.onload = () => {
-            drawCanvas(backgroundColor.value); // Initial draw with the background color
-        };
+    onMounted(async () => {
+        // Create Blobs from the SVGs and convert them to URLs
+        const blobBlack = new Blob([PLACEHOLDER.CANVAS.svgBlack], { type: 'image/svg+xml' });
+        const urlBlack = URL.createObjectURL(blobBlack);
 
-        drawCanvas(backgroundColor.value);
+        const blobWhite = new Blob([PLACEHOLDER.CANVAS.svgWhite], { type: 'image/svg+xml' });
+        const urlWhite = URL.createObjectURL(blobWhite);
+
+        try {
+            // Load both images and wait for them to be loaded
+            const [loadedImgBlack, loadedImgWhite] = await Promise.all([
+                loadImage(urlBlack),
+                loadImage(urlWhite),
+            ]);
+
+            // Assign the loaded images to refs
+            imgBlack.value = loadedImgBlack;
+            imgWhite.value = loadedImgWhite;
+
+            // Call your drawCanvas function with the loaded images
+            drawCanvas(backgroundColor.value);
+        } catch (error) {
+            console.error('Error loading images:', error);
+        }
     });
 </script>
 <style lang="scss" scoped>

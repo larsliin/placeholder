@@ -1,7 +1,9 @@
 export default class UiCanvas {
-    constructor(canvasWidth, canvasHeight, imagePath) {
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.imagePath = imagePath;
+    constructor(width, height, svgBlack, svgWhite, swatches) {
+        this.width = width;
+        this.height = height;
+        this.svgBlack = svgBlack;
+        this.svgWhite = svgWhite;
+        this.swatches = swatches;
     }
 }
