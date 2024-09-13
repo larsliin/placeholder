@@ -1,57 +1,53 @@
 <template>
-    <v-card
-        :flat="true">
-        <v-card-text>
-            <v-container>
-                <v-row>
-                    <v-col
-                        cols="12">
-                        <span class="text-h5">Placeholder</span>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col
-                        cols="6">
-                        <v-color-picker
-                            class="d-inline"
-                            v-model="backgroundColor"
-                            hide-sliders
-                            hide-canvas
-                            :swatches="PLACEHOLDER.CANVAS.swatches"
-                            show-swatches
-                            :rounded="true"
-                            width="100"
-                            :modes="['hex', 'rgb']" />
-                        <v-text-field
-                            label="Placeholder Width"
-                            type="number"
-                            v-model.number="canvasWidth" />
-                        <v-text-field
-                            label="Placeholder Height"
-                            type="number"
-                            v-model.number="canvasHeight" />
-                    </v-col>
-                    <v-col
-                        cols="6">
-                        <div class="canvas-container">
-                            <canvas ref="canvas"></canvas>
-                        </div>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col
-                        cols="12">
-                        <v-btn
-                            color="blue-darken-1"
-                            variant="tonal"
-                            @click="onButtonClick()">
-                            DOWNLOAD
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-card-text>
-    </v-card>
+
+    <v-container>
+        <v-row>
+            <v-col
+                cols="12">
+                <span class="text-h5">Placeholder</span>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col
+                cols="6">
+                <v-color-picker
+                    class="d-inline"
+                    v-model="backgroundColor"
+                    hide-sliders
+                    hide-canvas
+                    :swatches="PLACEHOLDER.CANVAS.swatches"
+                    show-swatches
+                    :rounded="true"
+                    width="100"
+                    :modes="['hex', 'rgb']" />
+                <v-text-field
+                    label="Placeholder Width"
+                    type="number"
+                    v-model.number="canvasWidth" />
+                <v-text-field
+                    label="Placeholder Height"
+                    type="number"
+                    v-model.number="canvasHeight" />
+            </v-col>
+            <v-col
+                cols="6">
+                <div class="canvas-container">
+                    <canvas ref="canvas"></canvas>
+                </div>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col
+                cols="12">
+                <v-btn
+                    color="blue-darken-1"
+                    variant="tonal"
+                    @click="onButtonClick()">
+                    DOWNLOAD
+                </v-btn>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script setup>
