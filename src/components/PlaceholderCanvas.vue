@@ -42,7 +42,7 @@
                 <v-btn
                     color="blue-darken-1"
                     variant="tonal"
-                    @click="onButtonClick()">
+                    @click="onSaveClick()">
                     DOWNLOAD
                 </v-btn>
             </v-col>
@@ -66,13 +66,13 @@
     const canvasHeight = ref(PLACEHOLDER.CANVAS.height);
     const canvas = ref(null);
 
-    function onButtonClick() {
+    function onSaveClick() {
         const canvasElement = canvas.value;
         const image = canvasElement.toDataURL('image/png'); // Convert canvas to data URL
 
         const link = document.createElement('a');
         link.href = image;
-        link.download = 'canvas-image.png';
+        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${backgroundColor.value.replace(/^#/, '')}.png`;
         link.click();
     }
 
