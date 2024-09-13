@@ -20,6 +20,31 @@ const vuetify = createVuetify({
             mdi,
         },
     },
+    theme: {
+        dark: true,
+        themes: {
+            light: {
+                colors: {
+                    primary: '#003354',
+                    secondary: '#91BED4',
+                    accent: '#82B1FF',
+                    error: '#FF5252',
+                    info: '#2196F3',
+                    success: '#4CAF50',
+                    warning: '#FB8C00',
+                },
+            },
+            dark: {
+                dark: true,
+                variables: {},
+                colors: {
+                    primary: '#91BED4',
+                    anchor: '#f00',
+                    secondary: '#f00',
+                },
+            },
+        },
+    },
 });
 
 const appElement = document.getElementById('app');
