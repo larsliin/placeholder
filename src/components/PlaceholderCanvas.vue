@@ -71,8 +71,9 @@
         const image = canvasElement.toDataURL('image/png'); // Convert canvas to data URL
 
         const link = document.createElement('a');
+        const colorStr = backgroundColor.value.toLowerCase().replace(/^#/, '');
         link.href = image;
-        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${backgroundColor.value.replace(/^#/, '')}.png`;
+        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${colorStr}.png`;
         link.click();
     }
 
