@@ -9,6 +9,7 @@
                 cols="6"
                 class="text-right">
                 <v-btn
+                    size="xsmall"
                     :icon="mdiThemeLightDark"
                     @click="onThemeClick()" />
             </v-col>

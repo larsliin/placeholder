@@ -24,6 +24,17 @@
                     type="number"
                     @update:modelValue="onHeightUpdate($event)"
                     v-model.number="canvasHeight" />
+                <v-radio-group
+                    v-model="mimeType"
+                    @update:modelValue="onMimeTypeUpdate($event)"
+                    inline>
+                    <template v-for="type in mimeTypes" :key="type.value">
+                        <v-radio
+                            class="radiobutton"
+                            :label="type.label"
+                            :value="type.value" />
+                    </template>
+                </v-radio-group>
             </v-col>
             <v-col
                 cols="6">
@@ -56,6 +67,21 @@
 
     const canvasWidth = ref(PLACEHOLDER.CANVAS.width);
     const canvasHeight = ref(PLACEHOLDER.CANVAS.height);
+    const mimeTypes = ref([
+        {
+            label: 'Png',
+            value: 'image/png',
+        },
+        {
+            label: 'Jpeg',
+            value: 'image/jpg',
+        },
+        {
+            label: 'Gif',
+            value: 'image/gif',
+        },
+    ]);
+    const mimeType = ref(mimeTypes.value[0].value);
     const canvas = ref(null);
 
     const placeholderStore = usePlaceholderStore();
@@ -72,14 +98,18 @@
         placeholderStore.set_syncStorage({ height: event });
     }
 
+    function onMimeTypeUpdate(event) {
+        placeholderStore.set_syncStorage({ mimetype: event });
+    }
+
     function onSaveClick() {
         const canvasElement = canvas.value;
-        const image = canvasElement.toDataURL('image/png'); // Convert canvas to data URL
-
+        const image = canvasElement.toDataURL(mimeType.value); // Convert canvas to data URL
+        const fileExtension = mimeType.value.split('/')[1];
         const link = document.createElement('a');
         const colorStr = backgroundColor.value.toLowerCase().replace(/^#/, '');
         link.href = image;
-        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${colorStr}.png`;
+        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${colorStr}.${fileExtension}`;
         link.click();
     }
 
@@ -170,12 +200,13 @@
 
         try {
             // Load both images and wait for them to be loaded
-            const [loadedImgBlack, loadedImgWhite, color, width, height] = await Promise.all([
+            const [loadedImgBlack, loadedImgWhite, color, width, height, mimetype] = await Promise.all([
                 loadImage(urlBlack),
                 loadImage(urlWhite),
                 placeholderStore.get_syncStorage('color'),
                 placeholderStore.get_syncStorage('width'),
                 placeholderStore.get_syncStorage('height'),
+                placeholderStore.get_syncStorage('mimetype'),
             ]);
 
             // Assign the loaded images to refs
@@ -192,6 +223,10 @@
 
             if (height) {
                 canvasHeight.value = height;
+            }
+
+            if(mimetype) {
+                mimeType.value = mimetype;
             }
 
             // Call your drawCanvas function with the loaded images
@@ -215,5 +250,8 @@
         top: 50%;
         transform: translate(-50%, -50%);
     }
+}
+:deep(.v-color-picker-edit) {
+    margin-top: 0;
 }
 </style>
