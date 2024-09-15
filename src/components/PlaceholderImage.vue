@@ -3,38 +3,63 @@
         <v-row>
             <v-col
                 cols="6">
-                <v-color-picker
-                    class="d-inline"
-                    v-model="backgroundColor"
-                    @update:modelValue="onColorUpdate($event)"
-                    hide-sliders
-                    hide-canvas
-                    :swatches="PLACEHOLDER.CANVAS.swatches"
-                    show-swatches
-                    :rounded="true"
-                    width="100"
-                    :modes="['hex', 'rgb']" />
-                <v-text-field
-                    label="Placeholder Width"
-                    type="number"
-                    @update:modelValue="onWidthUpdate($event)"
-                    v-model.number="canvasWidth" />
-                <v-text-field
-                    label="Placeholder Height"
-                    type="number"
-                    @update:modelValue="onHeightUpdate($event)"
-                    v-model.number="canvasHeight" />
-                <v-radio-group
-                    v-model="mimeType"
-                    @update:modelValue="onMimeTypeUpdate($event)"
-                    inline>
-                    <template v-for="type in mimeTypes" :key="type.value">
-                        <v-radio
-                            class="radiobutton"
-                            :label="type.label"
-                            :value="type.value" />
-                    </template>
-                </v-radio-group>
+                <v-row>
+                    <v-col
+                        cols="12"><v-color-picker
+                        class="d-inline"
+                        density="compact"
+                        v-model="backgroundColor"
+                        :hide-details="true"
+                        @update:modelValue="onColorUpdate($event)"
+                        hide-sliders
+                        hide-canvas
+                        :swatches="PLACEHOLDER.CANVAS.swatches"
+                        show-swatches
+                        :rounded="true"
+                        width="100"
+                        :modes="['hex', 'rgb']" />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col
+                        cols="6">
+                        <v-text-field
+                            density="compact"
+                            label="Placeholder Width"
+                            :hide-details="true"
+                            type="number"
+                            @update:modelValue="onWidthUpdate($event)"
+                            v-model.number="canvasWidth" />
+                    </v-col>
+                    <v-col
+                        cols="6">
+                        <v-text-field
+                            density="compact"
+                            :hide-details="true"
+                            label="Placeholder Height"
+                            type="number"
+                            @update:modelValue="onHeightUpdate($event)"
+                            v-model.number="canvasHeight" />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col
+                        cols="12">
+                        <v-radio-group
+                            :hide-details="true"
+                            density="comfortable"
+                            v-model="mimeType"
+                            @update:modelValue="onMimeTypeUpdate($event)"
+                            inline>
+                            <template v-for="type in mimeTypes" :key="type.value">
+                                <v-radio
+                                    class="radiobutton"
+                                    :label="type.label"
+                                    :value="type.value" />
+                            </template>
+                        </v-radio-group>
+                    </v-col>
+                </v-row>
             </v-col>
             <v-col
                 cols="6">
@@ -225,7 +250,7 @@
                 canvasHeight.value = height;
             }
 
-            if(mimetype) {
+            if (mimetype) {
                 mimeType.value = mimetype;
             }
 

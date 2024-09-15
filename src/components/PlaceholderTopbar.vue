@@ -35,7 +35,6 @@
         theme.global.name.value = placeholderStore.theme ? placeholderStore.theme : 'light';
     });
 
-
     function onThemeClick() {
         if (!placeholderStore.theme || placeholderStore.theme === 'light') {
             placeholderStore.theme = 'dark';
