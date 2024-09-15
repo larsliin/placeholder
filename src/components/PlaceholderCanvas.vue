@@ -1,0 +1,198 @@
+<template>
+
+    <v-container>
+        <v-row>
+            <v-col
+                cols="12">
+                <span class="text-h5">Placeholder</span>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col
+                cols="6">
+                <v-color-picker
+                    class="d-inline"
+                    v-model="backgroundColor"
+                    hide-sliders
+                    hide-canvas
+                    :swatches="PLACEHOLDER.CANVAS.swatches"
+                    show-swatches
+                    :rounded="true"
+                    width="100"
+                    :modes="['hex', 'rgb']" />
+                <v-text-field
+                    label="Placeholder Width"
+                    type="number"
+                    v-model.number="canvasWidth" />
+                <v-text-field
+                    label="Placeholder Height"
+                    type="number"
+                    v-model.number="canvasHeight" />
+            </v-col>
+            <v-col
+                cols="6">
+                <div class="canvas-container">
+                    <canvas ref="canvas"></canvas>
+                </div>
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col
+                cols="12">
+                <v-btn
+                    color="blue-darken-1"
+                    variant="tonal"
+                    @click="onSaveClick()">
+                    DOWNLOAD
+                </v-btn>
+            </v-col>
+        </v-row>
+    </v-container>
+</template>
+
+<script setup>
+    import { onMounted, ref, watch } from 'vue';
+    import { PLACEHOLDER } from '@/constants';
+    import useColors from '@cmp/colors';
+    import { useTheme } from 'vuetify';
+
+    const theme = useTheme();
+
+    theme.global.name.value = 'dark'; // 'light'
+
+    const backgroundColor = ref(PLACEHOLDER.CANVAS.swatches[0][0]);
+
+    const canvasWidth = ref(PLACEHOLDER.CANVAS.width);
+    const canvasHeight = ref(PLACEHOLDER.CANVAS.height);
+    const canvas = ref(null);
+
+    function onSaveClick() {
+        const canvasElement = canvas.value;
+        const image = canvasElement.toDataURL('image/png'); // Convert canvas to data URL
+
+        const link = document.createElement('a');
+        const colorStr = backgroundColor.value.toLowerCase().replace(/^#/, '');
+        link.href = image;
+        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${colorStr}.png`;
+        link.click();
+    }
+
+    function getImageDims(img) {
+        // Calculate aspect ratios
+        const containerRatio = canvasWidth.value / canvasHeight.value;
+
+        const imageWidth = img.width;
+        const imageHeight = img.height;
+
+        let width;
+        let height;
+
+        if (containerRatio < 1) {
+            // Container is wider relative to its height
+            width = canvasWidth.value;
+            height = (imageHeight / imageWidth) * canvasWidth.value;
+        } else {
+            // Container is taller relative to its width
+            width = (imageWidth / imageHeight) * canvasHeight.value;
+            height = canvasHeight.value;
+        }
+
+        width /= 2;
+        height /= 2;
+
+        return { width, height };
+    }
+    const imgBlack = ref(null);
+    const imgWhite = ref(null);
+
+    const colors = useColors();
+
+    function drawCanvas() {
+        const ctx = canvas.value.getContext('2d');
+
+        canvas.value.width = canvasWidth.value;
+        canvas.value.height = canvasHeight.value;
+
+        // Fill the entire canvas with the dynamic background color
+        ctx.fillStyle = backgroundColor.value;
+        ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
+
+        const image = colors.isHexBelow50Percent(backgroundColor.value)
+            ? imgWhite.value : imgBlack.value;
+
+        if (image) {
+            const dims = getImageDims(image);
+            const x = (canvasWidth.value - dims.width) / 2;
+            const y = (canvasHeight.value - dims.height) / 2;
+
+            ctx.drawImage(image, x, y, dims.width, dims.height);
+        }
+    }
+
+    const resizeCanvas = () => {
+        // Apply the new dimensions to the canvas
+        canvas.value.width = canvasWidth.value;
+        canvas.value.height = canvasHeight.value;
+
+        // Redraw the canvas with the new dimensions
+        drawCanvas();
+    };
+
+    watch([canvasWidth, canvasHeight], () => {
+        resizeCanvas();
+    });
+
+    watch(backgroundColor, () => {
+        drawCanvas();
+    });
+
+    // Function to create a promise that resolves when an image is loaded
+    const loadImage = (src) => new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = (error) => reject(error);
+        img.src = src;
+    });
+
+    onMounted(async () => {
+        // Create Blobs from the SVGs and convert them to URLs
+        const blobBlack = new Blob([PLACEHOLDER.CANVAS.svgBlack], { type: 'image/svg+xml' });
+        const urlBlack = URL.createObjectURL(blobBlack);
+
+        const blobWhite = new Blob([PLACEHOLDER.CANVAS.svgWhite], { type: 'image/svg+xml' });
+        const urlWhite = URL.createObjectURL(blobWhite);
+
+        try {
+            // Load both images and wait for them to be loaded
+            const [loadedImgBlack, loadedImgWhite] = await Promise.all([
+                loadImage(urlBlack),
+                loadImage(urlWhite),
+            ]);
+
+            // Assign the loaded images to refs
+            imgBlack.value = loadedImgBlack;
+            imgWhite.value = loadedImgWhite;
+
+            // Call your drawCanvas function with the loaded images
+            drawCanvas(backgroundColor.value);
+        } catch (error) {
+            console.error('Error loading images:', error);
+        }
+    });
+</script>
+<style lang="scss" scoped>
+.canvas-container {
+    height: 100%;
+    position: relative;
+    width: 100%;
+
+    canvas {
+        left: 50%;
+        max-height: 100%;
+        max-width: 100%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+</style>
