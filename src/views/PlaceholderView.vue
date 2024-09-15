@@ -1,14 +1,17 @@
 <template>
-    <PlaceholderCanvas
-        class="placeholder-canvas" />
+    <div class="placeholder-container">
+        <PlaholderTopbar />
+        <PlaceholderImage />
+    </div>
 </template>
 
 <script setup>
-    import PlaceholderCanvas from '@/components/PlaceholderCanvas.vue';
+    import PlaholderTopbar from '@/components/PlaceholderTopbar.vue';
+    import PlaceholderImage from '@/components/PlaceholderImage.vue';
 </script>
 
 <style scoped lang="scss">
-.placeholder-canvas {
+.placeholder-container {
     width: 800px;
 }
 </style>

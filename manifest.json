@@ -4,16 +4,16 @@
 	"version": "1.0",
 	"description": "Placeholder",
 	"permissions": [
-		"bookmarks",
-		"storage",
-		"unlimitedStorage",
-		"tabs"
+		"storage"
 	],
 	"background": {
 		"service_worker": "background.js"
 	},
 	"action": {
 		"default_popup": "popup.html"
+	},
+	"chrome_url_overrides": {
+		"newtab": "index.html"
 	},
 	"icons": {
 		"128": "icons/128-bw.png"
