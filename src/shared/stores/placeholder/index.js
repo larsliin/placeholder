@@ -3,9 +3,9 @@ import actions from './_actions';
 import getters from './_getters';
 
 // eslint-disable-next-line
-export const useBookmarksStore = defineStore('bookmarksStore', {
+export const usePlaceholderStore = defineStore('placeholderStore', {
     state: () => ({
-
+        theme: null,
     }),
     actions,
     getters,
