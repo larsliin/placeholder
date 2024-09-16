@@ -8,9 +8,14 @@
             <v-col
                 cols="6"
                 class="text-right">
+                <!--
+                mdiWhiteBalanceSunny
+                mdiWeatherNight
+                mdiThemeLightDark
+                -->
                 <v-btn
                     size="xsmall"
-                    :icon="mdiThemeLightDark"
+                    :icon="mdiWhiteBalanceSunny"
                     @click="onThemeClick()" />
             </v-col>
         </v-row>
@@ -18,7 +23,7 @@
 </template>
 
 <script setup>
-    import { mdiThemeLightDark } from '@mdi/js';
+    import { mdiWhiteBalanceSunny } from '@mdi/js';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { onMounted } from 'vue';
     import { useTheme } from 'vuetify';
