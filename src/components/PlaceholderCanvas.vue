@@ -43,7 +43,7 @@
                     color="blue-darken-1"
                     variant="tonal"
                     @click="onSaveClick()">
-                    DOWNLOAD
+                    DOWNLOAD IMAGE
                 </v-btn>
             </v-col>
         </v-row>
