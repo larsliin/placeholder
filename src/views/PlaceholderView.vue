@@ -1,12 +1,10 @@
 <template>
     <div class="placeholder-container">
-        <PlaholderTopbar />
         <PlaceholderImage />
     </div>
 </template>
 
 <script setup>
-    import PlaholderTopbar from '@/components/PlaceholderTopbar.vue';
     import PlaceholderImage from '@/components/PlaceholderImage.vue';
 </script>
 

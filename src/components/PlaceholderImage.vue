@@ -5,30 +5,12 @@
                 cols="6">
                 <v-row>
                     <v-col
-                        cols="12"><v-color-picker
-                        class="d-inline"
-                        density="compact"
-                        v-model="backgroundColor"
-                        :hide-details="true"
-                        @update:modelValue="onColorUpdate($event)"
-                        hide-sliders
-                        hide-canvas
-                        :swatches="PLACEHOLDER.CANVAS.swatches"
-                        show-swatches
-                        :rounded="true"
-                        width="100"
-                        :modes="['hex', 'rgb']" />
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col
                         cols="6">
                         <v-text-field
                             density="compact"
                             label="Placeholder Width"
                             :hide-details="true"
                             type="number"
-                            @update:modelValue="onWidthUpdate($event)"
                             v-model.number="canvasWidth" />
                     </v-col>
                     <v-col
@@ -38,8 +20,25 @@
                             :hide-details="true"
                             label="Placeholder Height"
                             type="number"
-                            @update:modelValue="onHeightUpdate($event)"
                             v-model.number="canvasHeight" />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col
+                        cols="12">
+                        <v-color-picker
+                            class="d-inline"
+                            density="compact"
+                            v-model="backgroundColor"
+                            :hide-details="true"
+                            @update:modelValue="onColorUpdate($event)"
+                            hide-sliders
+                            hide-canvas
+                            :swatches="PLACEHOLDER.CANVAS.swatches"
+                            show-swatches
+                            :rounded="true"
+                            width="100"
+                            :modes="['hex', 'rgb']" />
                     </v-col>
                 </v-row>
                 <v-row>
@@ -87,6 +86,7 @@
     import { PLACEHOLDER } from '@/constants';
     import useColors from '@cmp/colors';
     import { usePlaceholderStore } from '@stores/placeholder';
+    import { useDebounce } from '@vueuse/core';
 
     const backgroundColor = ref(PLACEHOLDER.CANVAS.swatches[0][0]);
 
@@ -115,13 +115,17 @@
         placeholderStore.set_syncStorage({ color: event });
     }
 
-    function onWidthUpdate(event) {
-        placeholderStore.set_syncStorage({ width: event });
-    }
+    const debouncedCanvasWidth = useDebounce(canvasWidth, 300);
 
-    function onHeightUpdate(event) {
-        placeholderStore.set_syncStorage({ height: event });
-    }
+    watch(debouncedCanvasWidth, (newVal) => {
+        placeholderStore.set_syncStorage({ width: newVal });
+    });
+
+    const debouncedCanvasHeight = useDebounce(canvasHeight, 300);
+
+    watch(debouncedCanvasHeight, (newVal) => {
+        placeholderStore.set_syncStorage({ height: newVal });
+    });
 
     function onMimeTypeUpdate(event) {
         placeholderStore.set_syncStorage({ mimetype: event });
@@ -180,20 +184,19 @@
         ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
 
         // gradient
-
-        // Calculate the center of the canvas
+        // Calculate position
         const centerX = isHexBelow50Percent ? canvasWidth.value : 0;
         const centerY = isHexBelow50Percent ? 0 : canvasHeight.value;
 
         // Set the radius to fit within the canvas (half of the smallest dimension)
         const radius = Math.min(canvasWidth.value, canvasHeight.value) * 1;
 
-        // Create a radial gradient centered in the canvas
+        // Create a radial gradient
         // Parameters: createRadialGradient(x0, y0, r0, x1, y1, r1)
         const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
 
         // Define gradient color stops
-        const gradientStart = isHexBelow50Percent ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
+        const gradientStart = isHexBelow50Percent ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)';
         const gradientEnd = isHexBelow50Percent ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0)';
         gradient.addColorStop(0, gradientStart);
         gradient.addColorStop(1, gradientEnd);
@@ -249,14 +252,20 @@
 
         try {
             // Load both images and wait for them to be loaded
-            const [loadedImgBlack, loadedImgWhite, color, width, height, mimetype] = await Promise.all([
-                loadImage(urlBlack),
-                loadImage(urlWhite),
-                placeholderStore.get_syncStorage('color'),
-                placeholderStore.get_syncStorage('width'),
-                placeholderStore.get_syncStorage('height'),
-                placeholderStore.get_syncStorage('mimetype'),
-            ]);
+            const [
+                loadedImgBlack,
+                loadedImgWhite,
+                color,
+                width,
+                height,
+                mimetype] = await Promise.all([
+                    loadImage(urlBlack),
+                    loadImage(urlWhite),
+                    placeholderStore.get_syncStorage('color'),
+                    placeholderStore.get_syncStorage('width'),
+                    placeholderStore.get_syncStorage('height'),
+                    placeholderStore.get_syncStorage('mimetype'),
+                ]);
 
             // Assign the loaded images to refs
             imgBlack.value = loadedImgBlack;
@@ -290,6 +299,9 @@
     height: 100%;
     position: relative;
     width: 100%;
+    background-image: url('../assets/images/canvas-bg.png');
+    background-repeat: repeat;
+    border: 1px solid #ddd;
 
     canvas {
         left: 50%;
