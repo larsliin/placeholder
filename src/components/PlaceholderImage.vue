@@ -170,6 +170,7 @@
 
     function drawCanvas() {
         const ctx = canvas.value.getContext('2d');
+        const isHexBelow50Percent = colors.isHexBelow50Percent(backgroundColor.value);
 
         canvas.value.width = canvasWidth.value;
         canvas.value.height = canvasHeight.value;
@@ -178,8 +179,31 @@
         ctx.fillStyle = backgroundColor.value;
         ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
 
-        const image = colors.isHexBelow50Percent(backgroundColor.value)
-            ? imgWhite.value : imgBlack.value;
+        // gradient
+
+        // Calculate the center of the canvas
+        const centerX = isHexBelow50Percent ? canvasWidth.value : 0;
+        const centerY = isHexBelow50Percent ? 0 : canvasHeight.value;
+
+        // Set the radius to fit within the canvas (half of the smallest dimension)
+        const radius = Math.min(canvasWidth.value, canvasHeight.value) * 1;
+
+        // Create a radial gradient centered in the canvas
+        // Parameters: createRadialGradient(x0, y0, r0, x1, y1, r1)
+        const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
+
+        // Define gradient color stops
+        const gradientStart = isHexBelow50Percent ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.15)';
+        const gradientEnd = isHexBelow50Percent ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0)';
+        gradient.addColorStop(0, gradientStart);
+        gradient.addColorStop(1, gradientEnd);
+
+        // Use the gradient to fill the canvas
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
+
+        // placeholder image
+        const image = isHexBelow50Percent ? imgWhite.value : imgBlack.value;
 
         if (image) {
             const dims = getImageDims(image);
