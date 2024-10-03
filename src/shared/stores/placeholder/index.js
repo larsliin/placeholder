@@ -6,6 +6,7 @@ import getters from './_getters';
 export const usePlaceholderStore = defineStore('placeholderStore', {
     state: () => ({
         model: {},
+        canvas: null,
     }),
     actions,
     getters,
