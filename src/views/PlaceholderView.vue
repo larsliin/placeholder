@@ -39,6 +39,6 @@
 
 <style scoped lang="scss">
 .placeholder-container {
-    width: 800px;
+    width: 760px;
 }
 </style>
