@@ -11,7 +11,7 @@
                             label="Placeholder Width"
                             :hide-details="true"
                             type="number"
-                            v-model.number="canvasWidth" />
+                            v-model.number="placeholderStore.model.imageWidth" />
                     </v-col>
                     <v-col
                         cols="6">
@@ -20,7 +20,7 @@
                             :hide-details="true"
                             label="Placeholder Height"
                             type="number"
-                            v-model.number="canvasHeight" />
+                            v-model.number="placeholderStore.model.imageHeight" />
                     </v-col>
                 </v-row>
                 <v-row>
@@ -29,7 +29,7 @@
                         <v-color-picker
                             class="d-inline"
                             density="compact"
-                            v-model="backgroundColor"
+                            v-model="placeholderStore.model.color"
                             :hide-details="true"
                             @update:modelValue="onColorUpdate($event)"
                             hide-sliders
@@ -47,10 +47,10 @@
                         <v-radio-group
                             :hide-details="true"
                             density="comfortable"
-                            v-model="mimeType"
+                            v-model="placeholderStore.model.mimetype"
                             @update:modelValue="onMimeTypeUpdate($event)"
                             inline>
-                            <template v-for="type in mimeTypes" :key="type.value">
+                            <template v-for="type in PLACEHOLDER.MIME_TYPES" :key="type.value">
                                 <v-radio
                                     class="radiobutton"
                                     :label="type.label"
@@ -82,69 +82,34 @@
 </template>
 
 <script setup>
-    import { onMounted, ref, watch } from 'vue';
+    import { onMounted, ref, watch, computed } from 'vue';
     import { PLACEHOLDER } from '@/constants';
     import useColors from '@cmp/colors';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { useDebounce } from '@vueuse/core';
 
-    const backgroundColor = ref(PLACEHOLDER.CANVAS.swatches[0][0]);
-
-    const canvasWidth = ref(PLACEHOLDER.CANVAS.width);
-    const canvasHeight = ref(PLACEHOLDER.CANVAS.height);
-    const mimeTypes = ref([
-        {
-            label: 'Png',
-            value: 'image/png',
-        },
-        {
-            label: 'Jpeg',
-            value: 'image/jpg',
-        },
-        {
-            label: 'Gif',
-            value: 'image/gif',
-        },
-    ]);
-    const mimeType = ref(mimeTypes.value[0].value);
     const canvas = ref(null);
 
     const placeholderStore = usePlaceholderStore();
 
-    function onColorUpdate(event) {
-        placeholderStore.set_syncStorage({ color: event });
-    }
-
-    const debouncedCanvasWidth = useDebounce(canvasWidth, 300);
-
-    watch(debouncedCanvasWidth, (newVal) => {
-        placeholderStore.set_syncStorage({ width: newVal });
-    });
-
-    const debouncedCanvasHeight = useDebounce(canvasHeight, 300);
-
-    watch(debouncedCanvasHeight, (newVal) => {
-        placeholderStore.set_syncStorage({ height: newVal });
-    });
-
-    function onMimeTypeUpdate(event) {
-        placeholderStore.set_syncStorage({ mimetype: event });
-    }
-
+    // on click save
     function onSaveClick() {
         const canvasElement = canvas.value;
-        const image = canvasElement.toDataURL(mimeType.value); // Convert canvas to data URL
-        const fileExtension = mimeType.value.split('/')[1];
+        const image = canvasElement.toDataURL(placeholderStore.model.mimetype);
+        const fileExtension = placeholderStore.model.mimetype.split('/')[1];
         const link = document.createElement('a');
-        const colorStr = backgroundColor.value.toLowerCase().replace(/^#/, '');
+        const colorStr = placeholderStore.model.color.toLowerCase().replace(/^#/, '');
+
         link.href = image;
-        link.download = `placeholder-${canvasWidth.value}-${canvasHeight.value}-${colorStr}.${fileExtension}`;
+        link.download = `placeholder-${placeholderStore.model.imageWidth}-${placeholderStore.model.imageHeight}-${colorStr}.${fileExtension}`;
         link.click();
     }
 
+    // calculate image ratio dimensions
     function getImageDims(img) {
         // Calculate aspect ratios
-        const containerRatio = canvasWidth.value / canvasHeight.value;
+        const containerRatio = placeholderStore.model.imageWidth
+            / placeholderStore.model.imageHeight;
 
         const imageWidth = img.width;
         const imageHeight = img.height;
@@ -154,12 +119,12 @@
 
         if (containerRatio < 1) {
             // Container is wider relative to its height
-            width = canvasWidth.value;
-            height = (imageHeight / imageWidth) * canvasWidth.value;
+            width = placeholderStore.model.imageWidth;
+            height = (imageHeight / imageWidth) * placeholderStore.model.imageWidth;
         } else {
             // Container is taller relative to its width
-            width = (imageWidth / imageHeight) * canvasHeight.value;
-            height = canvasHeight.value;
+            width = (imageWidth / imageHeight) * placeholderStore.model.imageHeight;
+            height = placeholderStore.model.imageHeight;
         }
 
         width /= 2;
@@ -174,22 +139,22 @@
 
     function drawCanvas() {
         const ctx = canvas.value.getContext('2d');
-        const isHexBelow50Percent = colors.isHexBelow50Percent(backgroundColor.value);
+        const isHexBelow50Percent = colors.isHexBelow50Percent(placeholderStore.model.color);
 
-        canvas.value.width = canvasWidth.value;
-        canvas.value.height = canvasHeight.value;
+        canvas.value.width = placeholderStore.model.imageWidth;
+        canvas.value.height = placeholderStore.model.imageHeight;
 
         // Fill the entire canvas with the dynamic background color
-        ctx.fillStyle = backgroundColor.value;
-        ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
+        ctx.fillStyle = placeholderStore.model.color;
+        ctx.fillRect(0, 0, placeholderStore.model.imageWidth, placeholderStore.model.imageHeight);
 
         // gradient
         // Calculate position
-        const centerX = isHexBelow50Percent ? canvasWidth.value : 0;
-        const centerY = isHexBelow50Percent ? 0 : canvasHeight.value;
+        const centerX = isHexBelow50Percent ? placeholderStore.model.imageWidth : 0;
+        const centerY = isHexBelow50Percent ? 0 : placeholderStore.model.imageHeight;
 
         // Set the radius to fit within the canvas (half of the smallest dimension)
-        const radius = Math.min(canvasWidth.value, canvasHeight.value) * 1;
+        const radius = Math.min(placeholderStore.model.imageWidth, placeholderStore.model.imageHeight) * 1;
 
         // Create a radial gradient
         // Parameters: createRadialGradient(x0, y0, r0, x1, y1, r1)
@@ -203,15 +168,15 @@
 
         // Use the gradient to fill the canvas
         ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvasWidth.value, canvasHeight.value);
+        ctx.fillRect(0, 0, placeholderStore.model.imageWidth, placeholderStore.model.imageHeight);
 
         // placeholder image
         const image = isHexBelow50Percent ? imgWhite.value : imgBlack.value;
 
         if (image) {
             const dims = getImageDims(image);
-            const x = (canvasWidth.value - dims.width) / 2;
-            const y = (canvasHeight.value - dims.height) / 2;
+            const x = (placeholderStore.model.imageWidth - dims.width) / 2;
+            const y = (placeholderStore.model.imageHeight - dims.height) / 2;
 
             ctx.drawImage(image, x, y, dims.width, dims.height);
         }
@@ -219,18 +184,21 @@
 
     const resizeCanvas = () => {
         // Apply the new dimensions to the canvas
-        canvas.value.width = canvasWidth.value;
-        canvas.value.height = canvasHeight.value;
+        canvas.value.width = placeholderStore.model.imageWidth;
+        canvas.value.height = placeholderStore.model.imageHeight;
 
         // Redraw the canvas with the new dimensions
         drawCanvas();
     };
 
-    watch([canvasWidth, canvasHeight], () => {
+    watch([
+        () => placeholderStore.model.imageWidth,
+        () => placeholderStore.model.imageHeight,
+    ], () => {
         resizeCanvas();
     });
 
-    watch(backgroundColor, () => {
+    watch(() => placeholderStore.model.color, () => {
         drawCanvas();
     });
 
@@ -241,6 +209,32 @@
         img.onerror = (error) => reject(error);
         img.src = src;
     });
+
+    // save values in in synced storage
+
+    function onColorUpdate(event) {
+        placeholderStore.set_syncStorage({ color: event });
+    }
+
+    const imageWidthRef = computed(() => placeholderStore.model.imageWidth);
+
+    const debouncedCanvasWidth = useDebounce(imageWidthRef, 300);
+
+    watch(debouncedCanvasWidth, (newVal) => {
+        placeholderStore.set_syncStorage({ width: newVal });
+    });
+
+    const imageHeightRef = computed(() => placeholderStore.model.imageHeight);
+
+    const debouncedCanvasHeight = useDebounce(imageHeightRef, 300);
+
+    watch(debouncedCanvasHeight, (newVal) => {
+        placeholderStore.set_syncStorage({ height: newVal });
+    });
+
+    function onMimeTypeUpdate(event) {
+        placeholderStore.set_syncStorage({ mimetype: event });
+    }
 
     onMounted(async () => {
         // Create Blobs from the SVGs and convert them to URLs
@@ -255,40 +249,17 @@
             const [
                 loadedImgBlack,
                 loadedImgWhite,
-                color,
-                width,
-                height,
-                mimetype] = await Promise.all([
-                    loadImage(urlBlack),
-                    loadImage(urlWhite),
-                    placeholderStore.get_syncStorage('color'),
-                    placeholderStore.get_syncStorage('width'),
-                    placeholderStore.get_syncStorage('height'),
-                    placeholderStore.get_syncStorage('mimetype'),
-                ]);
+            ] = await Promise.all([
+                loadImage(urlBlack),
+                loadImage(urlWhite),
+            ]);
 
             // Assign the loaded images to refs
             imgBlack.value = loadedImgBlack;
             imgWhite.value = loadedImgWhite;
 
-            if (color) {
-                backgroundColor.value = color;
-            }
-
-            if (width) {
-                canvasWidth.value = width;
-            }
-
-            if (height) {
-                canvasHeight.value = height;
-            }
-
-            if (mimetype) {
-                mimeType.value = mimetype;
-            }
-
             // Call your drawCanvas function with the loaded images
-            drawCanvas(backgroundColor.value);
+            drawCanvas(placeholderStore.model.color);
         } catch (error) {
             console.error('Error loading images:', error);
         }

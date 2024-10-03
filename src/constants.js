@@ -19,4 +19,18 @@ export const PLACEHOLDER = Object.freeze({
             ['#f26324', '#f57a20', '#f79020', '#faac1a', '#000000'],
         ],
     ),
+    MIME_TYPES: [
+        {
+            label: 'Png',
+            value: 'image/png',
+        },
+        {
+            label: 'Jpeg',
+            value: 'image/jpg',
+        },
+        {
+            label: 'Gif',
+            value: 'image/gif',
+        },
+    ],
 });
