@@ -154,7 +154,10 @@
         const centerY = isHexBelow50Percent ? 0 : placeholderStore.model.imageHeight;
 
         // Set the radius to fit within the canvas (half of the smallest dimension)
-        const radius = Math.min(placeholderStore.model.imageWidth, placeholderStore.model.imageHeight) * 1;
+        const radius = Math.min(
+            placeholderStore.model.imageWidth,
+            placeholderStore.model.imageHeight,
+        ) * 1;
 
         // Create a radial gradient
         // Parameters: createRadialGradient(x0, y0, r0, x1, y1, r1)
