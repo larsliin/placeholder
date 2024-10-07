@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-    import PlaceholderImage from '@/components/PlaceholderImage.vue';
+    import PlaceholderImage from '@/components/image/PlaceholderImage.vue';
     import { onMounted } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { PLACEHOLDER } from '@/constants';
@@ -30,6 +30,9 @@
             placeholderStore.model.imageHeight = height || PLACEHOLDER.CANVAS.height;
             placeholderStore.model.color = color || PLACEHOLDER.CANVAS.swatches[0][0];
             placeholderStore.model.mimetype = mimetype || PLACEHOLDER.MIME_TYPES[0].value;
+
+            placeholderStore.model.paragraphCount = PLACEHOLDER.TEXT.paragraphCount;
+            placeholderStore.model.wordCount = PLACEHOLDER.TEXT.wordCount;
         } catch (error) {
             console.error(error);
         }
@@ -38,7 +41,4 @@
 </script>
 
 <style scoped lang="scss">
-.placeholder-container {
-    width: 760px;
-}
 </style>

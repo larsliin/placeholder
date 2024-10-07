@@ -34,7 +34,7 @@
                 show-swatches
                 :rounded="true"
                 width="100"
-                :modes="['hex', 'rgb']" />
+                :modes="['hex']" />
         </v-col>
     </v-row>
     <v-row>

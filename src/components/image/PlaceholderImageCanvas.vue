@@ -158,7 +158,7 @@
     height: 100%;
     position: relative;
     width: 100%;
-    background-image: url('../assets/images/canvas-bg.png');
+    background-image: url('../../assets/images/canvas-bg.png');
     background-repeat: repeat;
     border: 1px solid #ddd;
 

@@ -1,4 +1,5 @@
 import UiCanvas from './models/Canvas';
+import UiText from './models/Text';
 
 export const EMITS = Object.freeze({
     SAVE: 'save',
@@ -33,4 +34,8 @@ export const PLACEHOLDER = Object.freeze({
             value: 'image/gif',
         },
     ],
+    TEXT: new UiText(
+        3,
+        50,
+    ),
 });
