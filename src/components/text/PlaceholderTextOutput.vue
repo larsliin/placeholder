@@ -3,7 +3,7 @@
         <textarea
             class="output-paragraph"
             aria-label="paragraph output"
-            rows="10"
+            rows="22"
             spellcheck="false"
             v-model="lorem"></textarea>
     </div>
