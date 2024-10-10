@@ -3,6 +3,7 @@ import UiText from './models/Text';
 
 export const EMITS = Object.freeze({
     SAVE: 'save',
+    COPY: 'copy',
 });
 
 export const PLACEHOLDER = Object.freeze({
