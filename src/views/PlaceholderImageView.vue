@@ -6,8 +6,4 @@
 
 <script setup>
     import PlaceholderImage from '@/components/image/PlaceholderImage.vue';
-
 </script>
-
-<style scoped lang="scss">
-</style>

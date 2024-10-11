@@ -14,11 +14,6 @@
 </template>
 
 <script setup>
-    import { usePlaceholderStore } from '@stores/placeholder';
     import PlaceholderTextOutput from './PlaceholderTextOutput.vue';
     import PlaceholderTextForm from './PlaceholderTextForm.vue';
-
-    // eslint-disable-next-line
-    const placeholderStore = usePlaceholderStore();
-
 </script>

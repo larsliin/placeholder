@@ -48,6 +48,10 @@
     placeholderStore.canvas = canvas;
 
     function drawCanvas() {
+        if (!canvas.value) {
+            return;
+        }
+
         const ctx = canvas.value.getContext('2d');
         const isHexBelow50Percent = colors.isHexBelow50Percent(placeholderStore.model.color);
 

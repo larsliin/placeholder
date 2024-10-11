@@ -19,7 +19,7 @@
     import useEventsBus from '@cmp/eventBus';
     import { watch, ref, nextTick } from 'vue';
     import { EMITS } from '@/constants';
-    import PlaceholderText from '../components/text/PlaceholderText.vue';
+    import PlaceholderText from '@/components/text/PlaceholderText.vue';
 
     const { bus } = useEventsBus();
 
