@@ -5,7 +5,8 @@ import getters from './_getters';
 // eslint-disable-next-line
 export const usePlaceholderStore = defineStore('placeholderStore', {
     state: () => ({
-        model: {},
+        model: {
+        },
         canvas: null,
     }),
     actions,

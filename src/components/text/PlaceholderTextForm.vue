@@ -1,6 +1,17 @@
 <template>
     <v-row>
         <v-col
+            cols="12">
+            <v-btn
+                color="blue-darken-1"
+                variant="tonal"
+                @click="onGenerateUrlClick()">
+                Generate Url
+            </v-btn>
+        </v-col>
+    </v-row>
+    <v-row>
+        <v-col
             cols="6">
             <v-text-field
                 density="compact"
@@ -27,8 +38,9 @@
 
 <script setup>
     import { usePlaceholderStore } from '@stores/placeholder';
-    import { watch, computed } from 'vue';
+    import { watch, computed, onMounted } from 'vue';
     import { useDebounce } from '@vueuse/core';
+    import useLoremIpsum from '@cmp/loremIpsum';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -44,6 +56,31 @@
 
     watch(debouncedWordCountRef, (newVal) => {
         placeholderStore.set_syncStorage({ wordCount: newVal });
+    });
+
+    const { generateUrl, generateLoremIpsum } = useLoremIpsum();
+
+    function onGenerateUrlClick() {
+        placeholderStore.model.loremIpsumUrl = generateUrl();
+    }
+
+    watch([
+        () => placeholderStore.model.paragraphCount,
+        () => placeholderStore.model.wordCount,
+    ], () => {
+        placeholderStore.model.loremIpsumTxt = generateLoremIpsum(
+            placeholderStore.model.paragraphCount,
+            placeholderStore.model.wordCount,
+        );
+    });
+
+    onMounted(() => {
+        placeholderStore.model.loremIpsumUrl = generateUrl();
+
+        placeholderStore.model.loremIpsumTxt = generateLoremIpsum(
+            placeholderStore.model.paragraphCount,
+            placeholderStore.model.wordCount,
+        );
     });
 </script>
 

@@ -1,20 +1,22 @@
 <template>
     <div class="container">
-        <v-tabs
-            v-model="tab"
-            color="primary"
-            grow>
-            <v-tab
-                :value="1">
-                Image
-            </v-tab>
-            <v-tab
-                :value="2">
-                Text
-            </v-tab>
-        </v-tabs>
-        <PlaceholderImageView v-if="tab === 1" />
-        <PlaceholderTextView v-if="tab === 2" />
+        <template v-if="ready">
+            <v-tabs
+                v-model="tab"
+                color="primary"
+                grow>
+                <v-tab
+                    :value="1">
+                    Image
+                </v-tab>
+                <v-tab
+                    :value="2">
+                    Text
+                </v-tab>
+            </v-tabs>
+            <PlaceholderImageView v-if="tab === 1" />
+            <PlaceholderTextView v-if="tab === 2" />
+        </template>
     </div>
 </template>
 
@@ -25,6 +27,7 @@
     import { usePlaceholderStore } from '@stores/placeholder';
     import { PLACEHOLDER } from '@/constants';
 
+    const ready = ref(false);
     const tab = ref();
 
     const placeholderStore = usePlaceholderStore();
@@ -58,6 +61,8 @@
             placeholderStore.model.wordCount = wordCount || PLACEHOLDER.TEXT.wordCount;
             placeholderStore.model.paragraphCount = paragraphCount
                 || PLACEHOLDER.TEXT.paragraphCount;
+
+            ready.value = true;
         } catch (error) {
             console.error(error);
         }
