@@ -17,7 +17,8 @@ export default function useLoremIpsum() {
 
             // Randomly decide whether to add punctuation after the word
             if (Math.random() < 0.2 && index !== textArray.length - 1) { // 20% chance, avoid at end
-                const randomPunctuation = punctuationMarks[Math.floor(Math.random() * punctuationMarks.length)];
+                const randomPunctuation = punctuationMarks[
+                    Math.floor(Math.random() * punctuationMarks.length)];
                 // Append the punctuation directly to the word without a space
                 result[result.length - 1] += randomPunctuation;
             }
@@ -27,7 +28,11 @@ export default function useLoremIpsum() {
     };
 
     // Function to generate lorem ipsum, with optional mandatory words (for the first paragraph)
-    const generateSingleParagraph = (wordCount = 100, mandatoryWords = [], noSpacesOrPunctuation = false) => {
+    const generateSingleParagraph = (
+        wordCount = 100,
+        mandatoryWords = [],
+        noSpacesOrPunctuation = false,
+    ) => {
         const loremIpsumWords = [
             'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
             'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
@@ -65,7 +70,8 @@ export default function useLoremIpsum() {
         const textArray = [...effectiveMandatoryWords];
         const lastWords = [...textArray]; // Track last words to avoid repetition
 
-        const remainingWords = Math.max(0, wordCount - textArray.length); // Avoid negative remaining words
+        // Avoid negative remaining words
+        const remainingWords = Math.max(0, wordCount - textArray.length);
 
         // Add remaining words
         Array.from({ length: remainingWords }).forEach(() => {
@@ -85,7 +91,10 @@ export default function useLoremIpsum() {
     };
 
     // Function to generate multiple paragraphs
-    const generateLoremIpsum = (paragraphCount = 3, wordsPerParagraph = 100) => Array.from({ length: paragraphCount }, (_, i) => {
+    const generateLoremIpsum = (
+        paragraphCount = 3,
+        wordsPerParagraph = 100,
+    ) => Array.from({ length: paragraphCount }, (_, i) => {
         if (i === 0) {
             // First paragraph starts with "lorem ipsum"
             return generateSingleParagraph(wordsPerParagraph, ['lorem', 'ipsum']);
