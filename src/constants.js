@@ -2,8 +2,9 @@ import UiCanvas from './models/Canvas';
 import UiText from './models/Text';
 
 export const EMITS = Object.freeze({
-    SAVE: 'save',
+    CLICK: 'click',
     COPY: 'copy',
+    SAVE: 'save',
 });
 
 export const PLACEHOLDER = Object.freeze({

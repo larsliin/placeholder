@@ -3,33 +3,23 @@
         <v-row>
             <v-col
                 cols="12">
-                <v-text-field
-                    density="compact"
-                    :append-inner-icon="mdiContentCopy"
-                    @click:append-inner="onUrlCopyClick()"
-                    v-model="placeholderStore.model.loremIpsumUrl" />
+                <TextField
+                    v-if="placeholderStore.model.loremIpsumUrl"
+                    :icon="mdiContentCopy"
+                    v-model="placeholderStore.model.loremIpsumUrl"
+                    @click="onUrlCopyClick($event)" />
             </v-col>
         </v-row>
         <v-row>
             <v-col
                 cols="12">
-                <v-textarea
-                    rows="10"
-                    density="compact"
-                    spellcheck="false"
-                    class="output-paragraph"
+                <TextareaField
+                    v-if="placeholderStore.model.loremIpsumTxt"
                     v-model="placeholderStore.model.loremIpsumTxt"
-                    :flat="true" />
-                <v-btn
-                    color="blue-darken-1"
-                    variant="tonal"
-                    @click="onCopyClick()">
-                    COPY
-                </v-btn>
+                    @click="onParagraphCopyClick($event)" />
             </v-col>
         </v-row>
     </div>
-
 </template>
 
 <script setup>
@@ -37,21 +27,23 @@
     import { EMITS } from '@/constants';
     import useEventsBus from '@cmp/eventBus';
     import { mdiContentCopy } from '@mdi/js';
+    import TextField from '@/components/formFields/textField.vue';
+    import TextareaField from '@/components/formFields/textareaField.vue';
 
     const placeholderStore = usePlaceholderStore();
 
     const { emit } = useEventsBus();
 
-    function onCopyClick() {
-        navigator.clipboard.writeText(placeholderStore.model.loremIpsumTxt).then(() => {
+    function onParagraphCopyClick(event) {
+        navigator.clipboard.writeText(event).then(() => {
             emit(EMITS.COPY, { success: true });
         }).catch(() => {
             emit(EMITS.COPY, { success: false });
         });
     }
 
-    function onUrlCopyClick() {
-        navigator.clipboard.writeText(placeholderStore.model.loremIpsumUrl).then(() => {
+    function onUrlCopyClick(event) {
+        navigator.clipboard.writeText(event).then(() => {
             emit(EMITS.COPY, { success: true });
         }).catch(() => {
             emit(EMITS.COPY, { success: false });
