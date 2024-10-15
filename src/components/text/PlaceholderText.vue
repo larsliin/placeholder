@@ -46,6 +46,7 @@
                 <TextareaField
                     v-if="placeholderStore.model.loremIpsumTxt"
                     v-model="placeholderStore.model.loremIpsumTxt"
+                    :icon="mdiContentCopy"
                     @click="onParagraphCopyClick($event)" />
             </v-col>
         </v-row>
