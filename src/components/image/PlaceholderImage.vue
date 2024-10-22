@@ -16,8 +16,9 @@
                 <v-row>
                     <v-col cols="12">
                         <v-btn
+                            class="pull-right"
                             color="blue-darken-1"
-                            variant="tonal"
+                            variant="flat"
                             @click="onSaveClick()">
                             DOWNLOAD
                         </v-btn>

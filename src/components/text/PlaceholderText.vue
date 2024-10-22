@@ -2,23 +2,6 @@
     <v-container>
         <v-row>
             <v-col cols="6">
-                <v-btn
-                    color="blue-darken-1"
-                    variant="tonal"
-                    @click="onGenerateUrlClick()">
-                    Generate Url
-                </v-btn>
-            </v-col>
-            <v-col cols="6">
-                <TextField
-                    v-if="placeholderStore.model.loremIpsumUrl"
-                    :icon="mdiContentCopy"
-                    v-model="placeholderStore.model.loremIpsumUrl"
-                    @click="onUrlCopyClick($event)" />
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="6">
                 <v-row>
                     <v-col cols="6">
                         <v-text-field
@@ -50,6 +33,34 @@
                     @click="onParagraphCopyClick($event)" />
             </v-col>
         </v-row>
+        <v-row>
+            <v-col cols="6">
+                <v-btn
+                    color="blue-darken-1"
+                    variant="tonal"
+                    @click="onGenerateUrlClick()">
+                    Generate Url
+                </v-btn>
+            </v-col>
+            <v-col cols="6">
+                <TextField
+                    v-if="placeholderStore.model.loremIpsumUrl"
+                    :icon="mdiContentCopy"
+                    v-model="placeholderStore.model.loremIpsumUrl"
+                    @click="onUrlCopyClick($event)" />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col>
+                <v-btn
+                    class="pull-right"
+                    color="blue-darken-1"
+                    variant="flat"
+                    @click="onSaveClick()">
+                    Save
+                </v-btn>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -63,6 +74,7 @@
     import { mdiContentCopy } from '@mdi/js';
     import TextField from '@/components/formFields/textField.vue';
     import TextareaField from '@/components/formFields/textareaField.vue';
+    import { v4 as uuidv4 } from 'uuid';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -105,8 +117,6 @@
         );
     });
 
-    //
-
     const { emit } = useEventsBus();
 
     function onParagraphCopyClick(event) {
@@ -123,6 +133,24 @@
         }).catch(() => {
             emit(EMITS.COPY, { success: false });
         });
+    }
+
+    async function onSaveClick() {
+        const savedObj = await placeholderStore.get_syncStorage('saved');
+
+        const guid = uuidv4();
+        const arr = savedObj ? [...savedObj, guid] : [guid];
+
+        placeholderStore.set_syncStorage({ saved: arr });
+
+        placeholderStore.set_syncStorage({
+            [guid]: {
+                text: placeholderStore.model.loremIpsumTxt,
+                url: placeholderStore.model.loremIpsumUrl,
+            },
+        });
+
+        placeholderStore.savedTotal = arr.length;
     }
 </script>
 

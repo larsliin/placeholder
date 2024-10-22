@@ -40,4 +40,18 @@ export const PLACEHOLDER = Object.freeze({
         3,
         50,
     ),
+    TABS: [
+        {
+            id: 0,
+            label: 'Image',
+        },
+        {
+            id: 1,
+            label: 'Text',
+        },
+        {
+            id: 2,
+            label: 'Saved',
+        },
+    ],
 });

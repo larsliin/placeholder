@@ -8,6 +8,7 @@ export const usePlaceholderStore = defineStore('placeholderStore', {
         model: {
         },
         canvas: null,
+        savedTotal: 0,
     }),
     actions,
     getters,
