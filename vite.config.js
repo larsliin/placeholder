@@ -35,6 +35,13 @@ export default defineConfig({
             },
         ],
     },
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler',
+            },
+        },
+    },
     server: {
         port: 5173,
         strictPort: true,
@@ -48,7 +55,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 newtab: resolve(__dirname, 'index.html'),
-                popup: resolve(__dirname, 'popup.html'),
+                popup: resolve(__dirname, 'index.html'),
             },
         },
     },
