@@ -106,7 +106,7 @@
         }
 
         const savedLoremIpsumResp = await placeholderStore.get_syncStorage('saved');
-        placeholderStore.savedTotal = savedLoremIpsumResp.length;
+        placeholderStore.savedTotal = savedLoremIpsumResp ? savedLoremIpsumResp.length : 0;
     });
 
     watch(tab, () => {
