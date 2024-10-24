@@ -27,7 +27,7 @@
         },
     });
 
-    const vModel = defineModel({ type: String, required: true });
+    const vModel = defineModel({ type: String, required: true, default: '' });
 
     defineEmits([
         EMITS.CLICK,

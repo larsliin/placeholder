@@ -27,10 +27,9 @@
             </v-col>
             <v-col cols="6">
                 <TextareaField
-                    v-if="placeholderStore.model.loremIpsumTxt"
                     v-model="placeholderStore.model.loremIpsumTxt"
                     :icon="mdiContentCopy"
-                    @click="onParagraphCopyClick($event)" />
+                    @click="onCopy($event)" />
             </v-col>
         </v-row>
         <v-row>
@@ -44,10 +43,9 @@
             </v-col>
             <v-col cols="6">
                 <TextField
-                    v-if="placeholderStore.model.loremIpsumUrl"
                     :icon="mdiContentCopy"
                     v-model="placeholderStore.model.loremIpsumUrl"
-                    @click="onUrlCopyClick($event)" />
+                    @click="onCopy($event)" />
             </v-col>
         </v-row>
         <v-row>
@@ -119,15 +117,7 @@
 
     const { emit } = useEventsBus();
 
-    function onParagraphCopyClick(event) {
-        navigator.clipboard.writeText(event).then(() => {
-            emit(EMITS.COPY, { success: true });
-        }).catch(() => {
-            emit(EMITS.COPY, { success: false });
-        });
-    }
-
-    function onUrlCopyClick(event) {
+    function onCopy(event) {
         navigator.clipboard.writeText(event).then(() => {
             emit(EMITS.COPY, { success: true });
         }).catch(() => {
@@ -143,14 +133,18 @@
 
         placeholderStore.set_syncStorage({ saved: arr });
 
+        const timestamp = Date.now();
+
+        const item = {
+            timestamp,
+            text: placeholderStore.model.loremIpsumTxt,
+            url: placeholderStore.model.loremIpsumUrl,
+        };
         placeholderStore.set_syncStorage({
-            [guid]: {
-                text: placeholderStore.model.loremIpsumTxt,
-                url: placeholderStore.model.loremIpsumUrl,
-            },
+            [guid]: item,
         });
 
-        placeholderStore.savedTotal = arr.length;
+        placeholderStore.savedPlaceholders.push(item);
     }
 </script>
 

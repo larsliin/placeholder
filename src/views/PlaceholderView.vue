@@ -9,11 +9,12 @@
                     v-for="tab in PLACEHOLDER.TABS"
                     :key="tab.id"
                     :value="tab.id"
-                    :disabled="tab.id === PLACEHOLDER.TABS[2].id && !placeholderStore.savedTotal">
+                    :disabled="tab.id === PLACEHOLDER.TABS[2].id
+                        && !placeholderStore.savedPlaceholders.length">
                     {{ tab.label }}
                     <span
                         v-if="tab.id === PLACEHOLDER.TABS[2].id">
-                        ({{ placeholderStore.savedTotal }})
+                        ({{ placeholderStore.savedPlaceholders.length }})
                     </span>
                 </v-tab>
             </v-tabs>
@@ -70,7 +71,7 @@
 
     const placeholderStore = usePlaceholderStore();
 
-    onMounted(async () => {
+    async function fetchSettings() {
         try {
             // Load both images and wait for them to be loaded
             const [
@@ -104,9 +105,34 @@
         } catch (error) {
             console.error(error);
         }
+    }
 
-        const savedLoremIpsumResp = await placeholderStore.get_syncStorage('saved');
-        placeholderStore.savedTotal = savedLoremIpsumResp ? savedLoremIpsumResp.length : 0;
+    async function fetchSaved() {
+        try {
+            const savedListResp = await placeholderStore.get_syncStorage('saved');
+
+            if (!savedListResp) {
+                return;
+            }
+
+            Promise.all(savedListResp.map((id) => placeholderStore.get_syncStorage(id)))
+                .then((results) => {
+                    if (results.length) {
+                        const arr = results.sort((a, b) => a.timestamp - b.timestamp);
+                        placeholderStore.savedPlaceholders = arr;
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading sync storage items:', error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    onMounted(() => {
+        fetchSettings();
+        fetchSaved();
     });
 
     watch(tab, () => {
