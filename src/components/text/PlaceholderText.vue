@@ -157,6 +157,7 @@
         } catch (error) {
             // Emit a failure event if any error occurs.
             emit(EMITS.COPY, { success: false });
+
             console.error(error);
         }
     }

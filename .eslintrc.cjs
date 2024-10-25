@@ -10,6 +10,7 @@ module.exports = {
         'no-param-reassign': ['error', { props: false }],
         camelcase: 'off',
         indent: ['error', 4],
+        'no-console': ['error', { allow: ['error'] }],
         'linebreak-style': 0,
         'object-curly-newline': 'off',
         'import/prefer-default-export': 'off',
