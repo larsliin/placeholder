@@ -63,16 +63,16 @@
 </template>
 
 <script setup>
-    import { usePlaceholderStore } from '@stores/placeholder';
-    import { watch, computed, onMounted } from 'vue';
+    import { EMITS, STORAGE } from '@/constants';
+    import { mdiContentCopy } from '@mdi/js'; // https://pictogrammers.com/library/mdi/
     import { useDebounce } from '@vueuse/core';
-    import useLoremIpsum from '@cmp/loremIpsum';
-    import { EMITS } from '@/constants';
-    import useEventsBus from '@cmp/eventBus';
-    import { mdiContentCopy } from '@mdi/js';
-    import TextField from '@/components/formFields/textField.vue';
-    import TextareaField from '@/components/formFields/textareaField.vue';
+    import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
+    import { watch, computed, onMounted } from 'vue';
+    import TextareaField from '@/components/formFields/textareaField.vue';
+    import TextField from '@/components/formFields/textField.vue';
+    import useEventsBus from '@cmp/eventBus';
+    import useLoremIpsum from '@cmp/loremIpsum';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -80,14 +80,14 @@
     const debouncedParagraphCountRef = useDebounce(paragraphCountRef, 300);
 
     watch(debouncedParagraphCountRef, (newVal) => {
-        placeholderStore.set_syncStorage({ paragraphCount: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.PARAGRAPH_COUNT]: newVal });
     });
 
     const wordCountRef = computed(() => placeholderStore.model.wordCount);
     const debouncedWordCountRef = useDebounce(wordCountRef, 300);
 
     watch(debouncedWordCountRef, (newVal) => {
-        placeholderStore.set_syncStorage({ wordCount: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.WORD_COUNT]: newVal });
     });
 
     const { generateUrl, generateLoremIpsum } = useLoremIpsum();
@@ -139,6 +139,7 @@
             // text, and URL from the placeholder store.
             const item = {
                 timestamp,
+                guid,
                 text: placeholderStore.model.loremIpsumTxt,
                 url: placeholderStore.model.loremIpsumUrl,
             };
@@ -150,7 +151,7 @@
 
             // Proceed only if the first set_syncStorage call succeeds.
             const arr = savedObj ? [...savedObj, guid] : [guid];
-            await placeholderStore.set_syncStorage({ saved: arr });
+            await placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: arr });
 
             // Add the new item to the local 'savedPlaceholders' array in the placeholder store.
             placeholderStore.savedPlaceholders.push(item);

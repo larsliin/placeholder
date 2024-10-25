@@ -30,4 +30,22 @@ export default {
             }
         });
     },
+
+    async delete_syncStorageItem(id) {
+        return new Promise((resolve, reject) => {
+            try {
+                // eslint-disable-next-line no-undef
+                chrome.storage.sync.remove([id], () => {
+                    // eslint-disable-next-line no-undef
+                    const error = chrome.runtime.lastError;
+                    if (error) {
+                        throw (error);
+                    }
+                    resolve();
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
 };

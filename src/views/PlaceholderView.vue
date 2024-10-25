@@ -36,12 +36,12 @@
 </template>
 
 <script setup>
+    import { STORAGE, PLACEHOLDER, EMITS } from '@/constants';
     import PlaceholderImageView from '@/views/PlaceholderImageView.vue';
     import PlaceholderTextView from '@/views/PlaceholderTextView.vue';
     import PlaceholderSavedView from '@/views/PlaceholderSavedView.vue';
     import { ref, onMounted, watch, nextTick } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
-    import { PLACEHOLDER, EMITS } from '@/constants';
     import { mdiCheckCircle, mdiAlertCircle } from '@mdi/js';
     import useEventsBus from '@cmp/eventBus';
 
@@ -66,8 +66,13 @@
         }
     });
 
-    const ready = ref(false);
     const tab = ref();
+
+    watch(() => bus.value.get(EMITS.UPDATE_TAB), async (args) => {
+        tab.value = args[0].id;
+    });
+
+    const ready = ref(false);
 
     const placeholderStore = usePlaceholderStore();
 
@@ -82,13 +87,13 @@
                 mimetype,
                 wordCount,
                 paragraphCount] = await Promise.all([
-                    placeholderStore.get_syncStorage('tabId'),
-                    placeholderStore.get_syncStorage('color'),
-                    placeholderStore.get_syncStorage('width'),
-                    placeholderStore.get_syncStorage('height'),
-                    placeholderStore.get_syncStorage('mimetype'),
-                    placeholderStore.get_syncStorage('wordCount'),
-                    placeholderStore.get_syncStorage('paragraphCount'),
+                    placeholderStore.get_syncStorage(STORAGE.TAB),
+                    placeholderStore.get_syncStorage(STORAGE.COLOR),
+                    placeholderStore.get_syncStorage(STORAGE.WIDTH),
+                    placeholderStore.get_syncStorage(STORAGE.HEIGHT),
+                    placeholderStore.get_syncStorage(STORAGE.MIMETYPE),
+                    placeholderStore.get_syncStorage(STORAGE.WORD_COUNT),
+                    placeholderStore.get_syncStorage(STORAGE.PARAGRAPH_COUNT),
                 ]);
 
             tab.value = tabId || PLACEHOLDER.TABS[0].id;
@@ -109,7 +114,7 @@
 
     async function fetchSaved() {
         try {
-            const savedListResp = await placeholderStore.get_syncStorage('saved');
+            const savedListResp = await placeholderStore.get_syncStorage(STORAGE.SAVED_ITEMS);
 
             if (!savedListResp) {
                 return;
@@ -136,7 +141,7 @@
     });
 
     watch(tab, () => {
-        placeholderStore.set_syncStorage({ tabId: tab.value });
+        placeholderStore.set_syncStorage({ [STORAGE.TAB]: tab.value });
     });
 </script>
 

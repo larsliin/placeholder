@@ -5,6 +5,18 @@ export const EMITS = Object.freeze({
     CLICK: 'click',
     COPY: 'copy',
     SAVE: 'save',
+    UPDATE_TAB: 'updateTab',
+});
+
+export const STORAGE = Object.freeze({
+    HEIGHT: 'height',
+    COLOR: 'color',
+    MIMETYPE: 'mimetype',
+    SAVED_ITEMS: 'saved_items',
+    TAB: 'tab',
+    WIDTH: 'width',
+    PARAGRAPH_COUNT: 'paragraph_count,',
+    WORD_COUNT: 'word_count',
 });
 
 export const PLACEHOLDER = Object.freeze({
@@ -36,10 +48,7 @@ export const PLACEHOLDER = Object.freeze({
             value: 'image/gif',
         },
     ],
-    TEXT: new UiText(
-        3,
-        50,
-    ),
+    TEXT: new UiText(3, 50),
     TABS: [
         {
             id: 0,

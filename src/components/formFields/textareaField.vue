@@ -7,10 +7,11 @@
             <v-icon :icon="icon" :size="24" class="icon" />
         </button>
         <v-textarea
+            class="output-paragraph"
             rows="10"
+            no-resize
             density="compact"
             spellcheck="false"
-            class="output-paragraph"
             v-model="vModel"
             :flat="true" />
     </div>

@@ -59,7 +59,7 @@
 
 <script setup>
 
-    import { PLACEHOLDER } from '@/constants';
+    import { PLACEHOLDER, STORAGE } from '@/constants';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { watch, computed } from 'vue';
     import { useDebounce } from '@vueuse/core';
@@ -72,7 +72,7 @@
     const debouncedCanvasWidth = useDebounce(imageWidthRef, 300);
 
     watch(debouncedCanvasWidth, (newVal) => {
-        placeholderStore.set_syncStorage({ width: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.WIDTH]: newVal });
     });
 
     // height
@@ -80,17 +80,17 @@
     const debouncedCanvasHeight = useDebounce(imageHeightRef, 300);
 
     watch(debouncedCanvasHeight, (newVal) => {
-        placeholderStore.set_syncStorage({ height: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.HEIGHT]: newVal });
     });
 
     // color
     function onColorUpdate(event) {
-        placeholderStore.set_syncStorage({ color: event });
+        placeholderStore.set_syncStorage({ [STORAGE.COLOR]: event });
     }
 
     // mimetype
     function onMimeTypeUpdate(event) {
-        placeholderStore.set_syncStorage({ mimetype: event });
+        placeholderStore.set_syncStorage({ [STORAGE.MIMETYPE]: event });
     }
 </script>
 

@@ -31,14 +31,14 @@
 </template>
 
 <script setup>
+    import { EMITS } from '@/constants';
+    import { mdiContentCopy } from '@mdi/js';
     import { ref, watch } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
     import PlaceholderSavedItem from '@/components/saved/PlaceholderSavedItem.vue';
     import TextareaField from '@/components/formFields/textareaField.vue';
     import TextField from '@/components/formFields/textField.vue';
-    import { EMITS } from '@/constants';
     import useEventsBus from '@cmp/eventBus';
-    import { mdiContentCopy } from '@mdi/js';
 
     const placeholderStore = usePlaceholderStore();
 
