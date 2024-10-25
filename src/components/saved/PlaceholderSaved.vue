@@ -4,7 +4,8 @@
             <v-col cols="6">
                 <v-row>
                     <v-col cols="12">
-                        <div class="saved-list">
+                        <div class="saved-list"
+                            v-if="placeholderStore.savedPlaceholders.length">
                             <PlaceholderSavedItem
                                 v-for="(item, index) in placeholderStore.savedPlaceholders"
                                 :key="index"

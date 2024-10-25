@@ -3,8 +3,14 @@ export default {
         return new Promise((resolve, reject) => {
             try {
                 // eslint-disable-next-line no-undef
-                chrome.storage.sync.set(storageObj).then((event) => {
-                    resolve(event);
+                chrome.storage.sync.set(storageObj, () => {
+                    // eslint-disable-next-line no-undef
+                    if (chrome.runtime.lastError) {
+                        // eslint-disable-next-line no-undef
+                        reject(chrome.runtime.lastError);
+                    } else {
+                        resolve();
+                    }
                 });
             } catch (error) {
                 reject(error);

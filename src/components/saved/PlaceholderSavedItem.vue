@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div class="text">
+        <div class="text"
+            v-if="savedItem">
             {{ savedItem.text }}
         </div>
     </div>

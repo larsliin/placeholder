@@ -126,26 +126,41 @@
     }
 
     async function onSaveClick() {
+        // Retrieve the current 'saved' array from sync storage asynchronously.
         const savedObj = await placeholderStore.get_syncStorage('saved');
 
-        const guid = uuidv4();
-        const arr = savedObj ? [...savedObj, guid] : [guid];
+        try {
+            // Generate a unique identifier (UUID) for the new item
+            // and capture the current timestamp in milliseconds.
+            const guid = uuidv4();
+            const timestamp = Date.now();
 
-        placeholderStore.set_syncStorage({ saved: arr });
+            // Create a new item object containing the timestamp,
+            // text, and URL from the placeholder store.
+            const item = {
+                timestamp,
+                text: placeholderStore.model.loremIpsumTxt,
+                url: placeholderStore.model.loremIpsumUrl,
+            };
 
-        const timestamp = Date.now();
+            // Attempt to save the new item to sync storage using its UUID as the key.
+            await placeholderStore.set_syncStorage({
+                [guid]: item,
+            });
 
-        const item = {
-            timestamp,
-            text: placeholderStore.model.loremIpsumTxt,
-            url: placeholderStore.model.loremIpsumUrl,
-        };
-        placeholderStore.set_syncStorage({
-            [guid]: item,
-        });
+            // Proceed only if the first set_syncStorage call succeeds.
+            const arr = savedObj ? [...savedObj, guid] : [guid];
+            await placeholderStore.set_syncStorage({ saved: arr });
 
-        placeholderStore.savedPlaceholders.push(item);
+            // Add the new item to the local 'savedPlaceholders' array in the placeholder store.
+            placeholderStore.savedPlaceholders.push(item);
+        } catch (error) {
+            // Emit a failure event if any error occurs.
+            emit(EMITS.COPY, { success: false });
+            console.error(error);
+        }
     }
+
 </script>
 
 <style scoped lang="scss">
