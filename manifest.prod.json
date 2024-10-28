@@ -1,0 +1,18 @@
+{
+	"manifest_version": 3,
+	"name": "Placeholder",
+	"version": "1.0",
+	"description": "Placeholder",
+	"permissions": [
+		"storage"
+	],
+	"background": {
+		"service_worker": "background.js"
+	},
+	"action": {
+		"default_popup": "index.html"
+	},
+	"icons": {
+		"128": "icons/128-bw.png"
+	}
+}
