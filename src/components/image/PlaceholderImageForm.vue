@@ -72,7 +72,7 @@
     const debouncedCanvasWidth = useDebounce(imageWidthRef, 300);
 
     watch(debouncedCanvasWidth, (newVal) => {
-        placeholderStore.set_syncStorage({ [STORAGE.WIDTH]: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.IMAGE_WIDTH]: newVal });
     });
 
     // height
@@ -80,17 +80,17 @@
     const debouncedCanvasHeight = useDebounce(imageHeightRef, 300);
 
     watch(debouncedCanvasHeight, (newVal) => {
-        placeholderStore.set_syncStorage({ [STORAGE.HEIGHT]: newVal });
+        placeholderStore.set_syncStorage({ [STORAGE.IMAGE_HEIGHT]: newVal });
     });
 
     // color
     function onColorUpdate(event) {
-        placeholderStore.set_syncStorage({ [STORAGE.COLOR]: event });
+        placeholderStore.set_syncStorage({ [STORAGE.IMAGE_COLOR]: event });
     }
 
     // mimetype
     function onMimeTypeUpdate(event) {
-        placeholderStore.set_syncStorage({ [STORAGE.MIMETYPE]: event });
+        placeholderStore.set_syncStorage({ [STORAGE.IMAGE_MIMETYPE]: event });
     }
 </script>
 

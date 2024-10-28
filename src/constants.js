@@ -9,14 +9,15 @@ export const EMITS = Object.freeze({
 });
 
 export const STORAGE = Object.freeze({
-    HEIGHT: 'height',
-    COLOR: 'color',
-    MIMETYPE: 'mimetype',
+    IMAGE_HEIGHT: 'image_height',
+    IMAGE_COLOR: 'image_color',
+    IMAGE_MIMETYPE: 'image_mimetype',
     SAVED_ITEMS: 'saved_items',
     TAB: 'tab',
-    WIDTH: 'width',
+    IMAGE_WIDTH: 'image_width',
     PARAGRAPH_COUNT: 'paragraph_count,',
     WORD_COUNT: 'word_count',
+    SELECTED_SAVED_ITEM: 'selected_saved_item',
 });
 
 export const PLACEHOLDER = Object.freeze({

@@ -49,14 +49,19 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col>
-                <v-btn
-                    class="pull-right"
-                    color="blue-darken-1"
-                    variant="flat"
-                    @click="onSaveClick()">
-                    Save
-                </v-btn>
+            <v-col class="view-footer">
+                <div>
+                    <v-btn
+                        class="pull-right"
+                        color="blue-darken-1"
+                        variant="flat"
+                        :disabled="kbSize > 8"
+                        @click="onSaveClick()">
+                        Save
+                    </v-btn>
+                </div>
+                <div class="err-msg"
+                    v-if="kbSize > 8">{{ kbSize }}KB (max 8KB)</div>
             </v-col>
         </v-row>
     </v-container>
@@ -68,7 +73,7 @@
     import { useDebounce } from '@vueuse/core';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
-    import { watch, computed, onMounted } from 'vue';
+    import { watch, computed, onMounted, ref } from 'vue';
     import TextareaField from '@/components/formFields/textareaField.vue';
     import TextField from '@/components/formFields/textField.vue';
     import useEventsBus from '@cmp/eventBus';
@@ -96,15 +101,54 @@
         placeholderStore.model.loremIpsumUrl = generateUrl();
     }
 
-    watch([
-        () => placeholderStore.model.paragraphCount,
-        () => placeholderStore.model.wordCount,
-    ], () => {
-        placeholderStore.model.loremIpsumTxt = generateLoremIpsum(
-            placeholderStore.model.paragraphCount,
-            placeholderStore.model.wordCount,
-        );
-    });
+    const saveObj = ref();
+
+    const kbSize = ref(false);
+
+    watch(
+        [
+            () => placeholderStore.model.paragraphCount,
+            () => placeholderStore.model.wordCount,
+        ],
+        () => {
+            placeholderStore.model.loremIpsumTxt = generateLoremIpsum(
+                placeholderStore.model.paragraphCount,
+                placeholderStore.model.wordCount,
+            );
+        },
+    );
+
+    function generateSaveObj() {
+        // Generate a unique identifier (UUID) for the new item
+        // and capture the current timestamp in milliseconds.
+        const guid = uuidv4();
+        const timestamp = Date.now();
+
+        saveObj.value = {
+            timestamp,
+            guid,
+            text: placeholderStore.model.loremIpsumTxt,
+            url: placeholderStore.model.loremIpsumUrl,
+        };
+    }
+
+    watch(
+        [
+            () => placeholderStore.model.loremIpsumTxt,
+            () => placeholderStore.model.loremIpsumUrl,
+        ],
+        () => {
+            generateSaveObj();
+
+            // storage item max 8 kb
+            const jsonString = JSON.stringify(saveObj.value);
+            const size = new Blob([jsonString]).size / 1024;
+            kbSize.value = Math.round(size * 100) / 100;
+        },
+        {
+            immediate: true,
+        },
+    );
 
     onMounted(() => {
         placeholderStore.model.loremIpsumUrl = generateUrl();
@@ -127,39 +171,25 @@
 
     async function onSaveClick() {
         // Retrieve the current 'saved' array from sync storage asynchronously.
-        const savedObj = await placeholderStore.get_syncStorage('saved');
+        const savedObj = await placeholderStore.get_syncStorage(STORAGE.SAVED_ITEMS);
 
         try {
-            // Generate a unique identifier (UUID) for the new item
-            // and capture the current timestamp in milliseconds.
-            const guid = uuidv4();
-            const timestamp = Date.now();
-
-            // Create a new item object containing the timestamp,
-            // text, and URL from the placeholder store.
-            const item = {
-                timestamp,
-                guid,
-                text: placeholderStore.model.loremIpsumTxt,
-                url: placeholderStore.model.loremIpsumUrl,
-            };
-
             // Attempt to save the new item to sync storage using its UUID as the key.
             await placeholderStore.set_syncStorage({
-                [guid]: item,
+                [saveObj.value.guid]: saveObj.value,
             });
 
             // Proceed only if the first set_syncStorage call succeeds.
-            const arr = savedObj ? [...savedObj, guid] : [guid];
+            const arr = savedObj ? [...savedObj, saveObj.value.guid] : [saveObj.value.guid];
             await placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: arr });
 
             // Add the new item to the local 'savedPlaceholders' array in the placeholder store.
-            placeholderStore.savedPlaceholders.push(item);
+            placeholderStore.savedPlaceholders.push(saveObj.value);
+
+            generateSaveObj();
         } catch (error) {
             // Emit a failure event if any error occurs.
             emit(EMITS.COPY, { success: false });
-
-            console.error(error);
         }
     }
 
@@ -172,4 +202,14 @@
     }
 }
 
+.view-footer {
+    display: flex;
+    flex-direction: column;
+}
+.err-msg {
+    color: rgb(var(--v-theme-error));
+    font-size: 12px;
+    text-align: right;
+    margin-top: 4px;
+}
 </style>

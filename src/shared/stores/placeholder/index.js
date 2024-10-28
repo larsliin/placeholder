@@ -8,6 +8,7 @@ export const usePlaceholderStore = defineStore('placeholderStore', {
         model: { },
         canvas: null,
         savedPlaceholders: [],
+        selectedSavedGuid: 0,
     }),
     actions,
     getters,

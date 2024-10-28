@@ -86,17 +86,20 @@
                 height,
                 mimetype,
                 wordCount,
-                paragraphCount] = await Promise.all([
+                paragraphCount,
+                selected] = await Promise.all([
                     placeholderStore.get_syncStorage(STORAGE.TAB),
-                    placeholderStore.get_syncStorage(STORAGE.COLOR),
-                    placeholderStore.get_syncStorage(STORAGE.WIDTH),
-                    placeholderStore.get_syncStorage(STORAGE.HEIGHT),
-                    placeholderStore.get_syncStorage(STORAGE.MIMETYPE),
+                    placeholderStore.get_syncStorage(STORAGE.IMAGE_COLOR),
+                    placeholderStore.get_syncStorage(STORAGE.IMAGE_WIDTH),
+                    placeholderStore.get_syncStorage(STORAGE.IMAGE_HEIGHT),
+                    placeholderStore.get_syncStorage(STORAGE.IMAGE_MIMETYPE),
                     placeholderStore.get_syncStorage(STORAGE.WORD_COUNT),
                     placeholderStore.get_syncStorage(STORAGE.PARAGRAPH_COUNT),
+                    placeholderStore.get_syncStorage(STORAGE.SELECTED_SAVED_ITEM),
                 ]);
 
             tab.value = tabId || PLACEHOLDER.TABS[0].id;
+            placeholderStore.selectedSavedGuid = selected || null;
             placeholderStore.model.imageWidth = width || PLACEHOLDER.CANVAS.width;
             placeholderStore.model.imageHeight = height || PLACEHOLDER.CANVAS.height;
             placeholderStore.model.color = color || PLACEHOLDER.CANVAS.swatches[0][0];

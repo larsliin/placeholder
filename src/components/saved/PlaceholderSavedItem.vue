@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" :class="{ selected }">
         <div class="container-inner"
             v-if="savedItem">
             <div class="text">
@@ -30,6 +30,10 @@
             type: Object,
             required: true,
         },
+        selected: {
+            type: Boolean,
+            default: false,
+        },
     });
 
     async function onDeleteClick() {
@@ -37,7 +41,26 @@
 
         const savedPlaceholdersFiltered = placeholderStore.savedPlaceholders
             .filter((e) => e.guid !== props.savedItem.guid);
+
+        // find the index of the current selected guid
+        let index = 0;
+        if (placeholderStore.selectedSavedGuid === props.savedItem.guid) {
+            index = Math.max(placeholderStore.savedPlaceholders
+                .findIndex((e) => e.guid === props.savedItem.guid) - 1, 0);
+        }
+
         placeholderStore.savedPlaceholders = savedPlaceholdersFiltered;
+
+        // update the selected guid
+        if (placeholderStore.savedPlaceholders.length) {
+            placeholderStore.selectedSavedGuid = placeholderStore.savedPlaceholders[index].guid;
+            placeholderStore.set_syncStorage({
+                [STORAGE.SELECTED_SAVED_ITEM]: placeholderStore.selectedSavedGuid,
+            });
+        } else {
+            placeholderStore.selectedSavedGuid = null;
+            placeholderStore.delete_syncStorageItem(STORAGE.SELECTED_SAVED_ITEM);
+        }
 
         const guidArrFiltered = placeholderStore.savedPlaceholders.map((e) => e.guid);
         placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: guidArrFiltered });
@@ -52,6 +75,7 @@
 .container {
     padding: 10px 4px;
 
+    &.selected,
     &:hover {
         background-color: #eee;
     }

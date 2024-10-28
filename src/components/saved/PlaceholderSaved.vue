@@ -8,6 +8,7 @@
                             v-if="placeholderStore.savedPlaceholders.length">
                             <PlaceholderSavedItem
                                 v-for="(item, index) in placeholderStore.savedPlaceholders"
+                                :selected="placeholderStore.selectedSavedGuid === item.guid"
                                 :key="index"
                                 :savedItem="item"
                                 @click="onItemClick(item)" />
@@ -16,14 +17,16 @@
                 </v-row>
             </v-col>
             <v-col cols="6">
-                <TextareaField
-                    v-model="activeItemModel.text"
-                    :icon="mdiContentCopy"
-                    @click="onCopy($event)" />
-                <TextField
-                    :icon="mdiContentCopy"
-                    v-model="activeItemModel.url"
-                    @click="onCopy($event)" />
+                <template v-if="activeItemModel">
+                    <TextareaField
+                        v-model="activeItemModel.text"
+                        :icon="mdiContentCopy"
+                        @click="onCopy($event)" />
+                    <TextField
+                        :icon="mdiContentCopy"
+                        v-model="activeItemModel.url"
+                        @click="onCopy($event)" />
+                </template>
             </v-col>
         </v-row>
 
@@ -31,7 +34,7 @@
 </template>
 
 <script setup>
-    import { EMITS } from '@/constants';
+    import { EMITS, STORAGE } from '@/constants';
     import { mdiContentCopy } from '@mdi/js';
     import { ref, watch } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
@@ -42,14 +45,13 @@
 
     const placeholderStore = usePlaceholderStore();
 
-    const activeItemModel = ref({
-        text: '',
-        url: '',
-    });
+    const activeItemModel = ref();
 
     function onItemClick(item) {
-        activeItemModel.value.text = item.text;
-        activeItemModel.value.url = item.url;
+        activeItemModel.value = item;
+
+        placeholderStore.selectedSavedGuid = item.guid;
+        placeholderStore.set_syncStorage({ [STORAGE.SELECTED_SAVED_ITEM]: item.guid });
     }
 
     const { emit } = useEventsBus();
@@ -62,13 +64,23 @@
         });
     }
 
-    watch(() => placeholderStore.savedPlaceholders, (newVal) => {
-        if (newVal && newVal.length) {
-            onItemClick(placeholderStore.savedPlaceholders[0]);
-        }
-    }, {
-        immediate: true,
-    });
+    watch(
+        [
+            () => placeholderStore.savedPlaceholders,
+            () => placeholderStore.selectedSavedGuid,
+        ],
+        (newVal) => {
+            if (newVal && newVal.length) {
+                placeholderStore.selectedSavedGuid = placeholderStore.selectedSavedGuid || placeholderStore.savedPlaceholders[0].guid;
+
+                activeItemModel.value = placeholderStore.savedPlaceholders
+                    .find((e) => e.guid === placeholderStore.selectedSavedGuid);
+            }
+        },
+        {
+            immediate: true,
+        },
+    );
 
 </script>
 
