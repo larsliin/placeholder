@@ -134,7 +134,7 @@
 
     // Save Object Generation and Size Calculation
     // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
-    function generateSaveObj(text, tags) {
+    function getSaveObj(text, tags) {
         const guid = uuidv4();
         const timestamp = Date.now();
 
@@ -164,7 +164,7 @@
         () => placeholderStore.model.loremIpsumTxt,
         () => {
             const jsonString = JSON
-                .stringify(getTxtTags());
+                .stringify(getSaveObj(placeholderStore.model.loremIpsumTxt, getTxtTags()));
             const size = new Blob([jsonString]).size / 1024;
 
             kbSize.value = Math.round(size * 100) / 100;
@@ -199,7 +199,7 @@
         const savedObj = await placeholderStore.get_syncStorage(STORAGE.SAVED_ITEMS);
 
         try {
-            const saveObj = generateSaveObj(txt, tags);
+            const saveObj = getSaveObj(txt, tags);
             await placeholderStore.set_syncStorage({ [saveObj.guid]: saveObj });
 
             const arr = savedObj ? [...savedObj, saveObj.guid] : [saveObj.guid];
