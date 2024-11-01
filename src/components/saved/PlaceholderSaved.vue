@@ -11,7 +11,7 @@
                                 :selected="placeholderStore.selectedSavedGuid === item.guid"
                                 :key="index"
                                 :savedItem="item"
-                                @click="onItemClick(item)" />
+                                @click.stop="onItemClick(item)" />
                         </div>
                     </v-col>
                 </v-row>
@@ -22,14 +22,9 @@
                         v-model="activeItemModel.text"
                         :icon="mdiContentCopy"
                         @click="onCopy($event)" />
-                    <TextField
-                        :icon="mdiContentCopy"
-                        v-model="activeItemModel.url"
-                        @click="onCopy($event)" />
                 </template>
             </v-col>
         </v-row>
-
     </v-container>
 </template>
 
@@ -39,8 +34,7 @@
     import { ref, watch } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
     import PlaceholderSavedItem from '@/components/saved/PlaceholderSavedItem.vue';
-    import TextareaField from '@/components/formFields/textareaField.vue';
-    import TextField from '@/components/formFields/textField.vue';
+    import TextareaField from '@/components/formFields/TextareaField.vue';
     import useEventsBus from '@cmp/eventBus';
 
     const placeholderStore = usePlaceholderStore();
@@ -71,7 +65,8 @@
         ],
         (newVal) => {
             if (newVal && newVal.length) {
-                placeholderStore.selectedSavedGuid = placeholderStore.selectedSavedGuid || placeholderStore.savedPlaceholders[0].guid;
+                placeholderStore.selectedSavedGuid = placeholderStore.selectedSavedGuid
+                    || placeholderStore.savedPlaceholders[0].guid;
 
                 activeItemModel.value = placeholderStore.savedPlaceholders
                     .find((e) => e.guid === placeholderStore.selectedSavedGuid);

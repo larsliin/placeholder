@@ -2,8 +2,14 @@
     <div class="container" :class="{ selected }">
         <div class="container-inner"
             v-if="savedItem">
-            <div class="text">
-                {{ savedItem.text }}
+            <div>
+                <div class="text">{{ savedItem.text }}</div>
+                <ul class="tags">
+                    <li v-for="(tag, index) in savedItem.tags" :key="index">
+                        <PlaceholderTag
+                            :tag="tag" />
+                    </li>
+                </ul>
             </div>
             <div class="icons">
                 <button type="button"
@@ -20,6 +26,7 @@
     import { mdiTrashCanOutline } from '@mdi/js'; // https://pictogrammers.com/library/mdi/
     import { usePlaceholderStore } from '@stores/placeholder';
     import useEventsBus from '@cmp/eventBus';
+    import PlaceholderTag from '@/components/saved/PlaceholderTag.vue';
 
     const { emit } = useEventsBus();
 
@@ -74,10 +81,15 @@
 <style scoped lang="scss">
 .container {
     padding: 10px 4px;
+    border-bottom: 1px solid transparent;
 
-    &.selected,
     &:hover {
-        background-color: #eee;
+        background-color: rgb(245, 245, 245);
+    }
+
+    &.selected {
+        background-color: rgb(245, 245, 245);
+        border-bottom: 1px solid rgba(0, 0, 0, .38);
     }
 
     &-inner {
@@ -100,5 +112,12 @@
 
 .icons {
     color: #666;
+}
+
+.tags {
+    margin-top: 6px;
+    column-gap: 6px;
+    display: flex;
+    list-style: none;
 }
 </style>

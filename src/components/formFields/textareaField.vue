@@ -8,7 +8,7 @@
         </button>
         <v-textarea
             class="output-paragraph"
-            rows="10"
+            :rows="rows"
             no-resize
             density="compact"
             spellcheck="false"
@@ -25,6 +25,11 @@
             type: String,
             required: false,
             default: '',
+        },
+        rows: {
+            type: Number,
+            required: false,
+            default: 10,
         },
     });
 
