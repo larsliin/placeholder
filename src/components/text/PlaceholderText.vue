@@ -37,13 +37,13 @@
                             class="pull-right"
                             color="blue-darken-1"
                             variant="flat"
-                            :disabled="kbSize > 8"
+                            :disabled="kbSize >= 8"
                             @click="onSaveTextClick()">
                             Save Body Text
                         </v-btn>
                     </div>
                     <div class="err-msg"
-                        :class="{ visible: kbSize > 8 }">
+                        :class="{ visible: kbSize >= 8 }">
                         {{ kbSize }}KB (max 8KB)
                     </div>
                 </div>
