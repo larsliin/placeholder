@@ -97,6 +97,8 @@
                     placeholderStore.get_syncStorage(STORAGE.PARAGRAPH_COUNT),
                     placeholderStore.get_syncStorage(STORAGE.SELECTED_SAVED_ITEM),
                 ]);
+            placeholderStore.model.body = {};
+            placeholderStore.model.url = {};
 
             tab.value = tabId || PLACEHOLDER.TABS[0].id;
             placeholderStore.selectedSavedGuid = selected || null;
@@ -105,8 +107,8 @@
             placeholderStore.model.color = color || PLACEHOLDER.CANVAS.swatches[0][0];
             placeholderStore.model.mimetype = mimetype || PLACEHOLDER.MIME_TYPES[0].value;
 
-            placeholderStore.model.wordCount = wordCount || PLACEHOLDER.TEXT.wordCount;
-            placeholderStore.model.paragraphCount = paragraphCount
+            placeholderStore.model.body.wordCount = wordCount || PLACEHOLDER.TEXT.wordCount;
+            placeholderStore.model.body.paragraphCount = paragraphCount
                 || PLACEHOLDER.TEXT.paragraphCount;
 
             ready.value = true;
