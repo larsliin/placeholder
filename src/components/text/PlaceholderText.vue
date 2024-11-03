@@ -43,8 +43,8 @@
                         </v-btn>
                     </div>
                     <div class="err-msg"
-                        :class="{ visible: kbSize > 8 }">
-                        {{ kbSize }}KB (max 8KB)
+                        :class="{ visible: kbSize >= 8 }">
+                        {{ kbSize }}KB (max 7.99KB)
                     </div>
                 </div>
             </v-col>
