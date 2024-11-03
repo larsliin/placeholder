@@ -37,14 +37,14 @@
                             class="pull-right"
                             color="blue-darken-1"
                             variant="flat"
-                            :disabled="kbSize > 8"
+                            :disabled="kbSize >= 8"
                             @click="save(placeholderStore.model.body)">
                             Save Body Text
                         </v-btn>
                     </div>
                     <div class="err-msg"
                         :class="{ visible: kbSize >= 8 }">
-                        {{ kbSize }}KB (max 7.99KB)
+                        {{ kbSize }}KB (8KB limit exceeded)
                     </div>
                 </div>
             </v-col>
@@ -86,7 +86,7 @@
     import { useDebounce } from '@vueuse/core';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
-    import { watch, computed, onMounted, ref } from 'vue';
+    import { watch, computed, onMounted, ref, toRaw } from 'vue';
     import TextareaField from '@/components/formFields/TextareaField.vue';
     import TextField from '@/components/formFields/TextField.vue';
     import useEventsBus from '@cmp/eventBus';
@@ -132,22 +132,6 @@
                 placeholderStore.model.body.paragraphCount,
                 placeholderStore.model.body.wordCount,
             );
-            placeholderStore.model.body.guid = uuidv4();
-            placeholderStore.model.body.timestamp = Date.now();
-            placeholderStore.model.body.tags = [
-                {
-                    label: 'Type',
-                    value: STORAGE.TEXT,
-                },
-                {
-                    label: 'Word Count',
-                    value: placeholderStore.model.body.wordCount,
-                },
-                {
-                    label: 'Paragraph Count',
-                    value: placeholderStore.model.body.paragraphCount,
-                },
-            ];
         },
         { immediate: true },
     );
@@ -169,10 +153,28 @@
     watch(
         () => placeholderStore.model.body.text,
         () => {
+            // update model object
+            placeholderStore.model.body.guid = uuidv4();
+            placeholderStore.model.body.timestamp = Date.now();
+            placeholderStore.model.body.tags = [
+                {
+                    label: 'Type',
+                    value: STORAGE.TEXT,
+                },
+                {
+                    label: 'Word Count',
+                    value: placeholderStore.model.body.wordCount,
+                },
+                {
+                    label: 'Paragraph Count',
+                    value: placeholderStore.model.body.paragraphCount,
+                },
+            ];
+
+            // calculate size
             const jsonString = JSON
                 .stringify(placeholderStore.model.body);
             const size = new Blob([jsonString]).size / 1024;
-
             kbSize.value = Math.round(size * 100) / 100;
         },
         { immediate: true },
@@ -194,13 +196,15 @@
         const savedObj = await placeholderStore.get_syncStorage(STORAGE.SAVED_ITEMS);
 
         try {
+            placeholderStore.savedPlaceholders.push(toRaw({ ...saveObj }));
             await placeholderStore.set_syncStorage({ [saveObj.guid]: saveObj });
 
             const arr = savedObj ? [...savedObj, saveObj.guid] : [saveObj.guid];
             await placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: arr });
 
-            placeholderStore.savedPlaceholders.push(saveObj);
+            saveObj.guid = uuidv4();
         } catch (error) {
+            console.error(error);
             emit(EMITS.COPY, { success: false });
         }
     }

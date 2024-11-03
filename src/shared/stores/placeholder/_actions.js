@@ -48,4 +48,31 @@ export default {
             }
         });
     },
+
+    async get_getBytesInUse() {
+        return new Promise((resolve, reject) => {
+            try {
+                // eslint-disable-next-line no-undef
+                chrome.storage.sync.getBytesInUse(null, (bytesInUse) => {
+                    // eslint-disable-next-line no-undef
+                    if (chrome.runtime.lastError) {
+                        // Handle the error if it occurred
+                        // eslint-disable-next-line no-undef
+                        reject(new Error(chrome.runtime.lastError));
+                    } else {
+                        const totalLimit = 102 * 1024; // 102 KB in bytes
+                        const remainingSpace = totalLimit - bytesInUse;
+
+                        // Calculate the maximum size for the next item
+                        const maxItemSize = Math.min(remainingSpace, 8 * 1024);
+
+                        resolve(maxItemSize);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+
 };

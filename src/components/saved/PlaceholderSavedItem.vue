@@ -76,6 +76,7 @@
             emit(EMITS.UPDATE_TAB, { id: 1 });
         }
     }
+
 </script>
 
 <style scoped lang="scss">
