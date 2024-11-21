@@ -24,12 +24,24 @@
                             v-model.number="placeholderStore.model.body.wordCount" />
                     </v-col>
                 </v-row>
+                <v-row>
+                    <v-col>
+                        <v-btn
+                            color="blue-darken-1"
+                            variant="tonal"
+                            @click="onGenerateUrlClick()">
+                            Generate Url
+                        </v-btn>
+                    </v-col>
+                </v-row>
             </v-col>
             <v-col cols="6">
                 <TextareaField
-                    v-model="placeholderStore.model.body.text"
+                    v-model="output"
                     :icon="mdiContentCopy"
                     :rows="9"
+                    @focus="onTextFieldFocus()"
+                    @blur="onTextFieldFocus()"
                     @click="onCopy($event)" />
                 <div class="text-save-button-wrp">
                     <div>
@@ -50,31 +62,6 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col cols="6">
-                <v-btn
-                    color="blue-darken-1"
-                    variant="tonal"
-                    @click="onGenerateUrlClick()">
-                    Generate Url
-                </v-btn>
-            </v-col>
-            <v-col cols="6">
-                <TextField
-                    :icon="mdiContentCopy"
-                    v-model="placeholderStore.model.url.text"
-                    @click="onCopy($event)" />
-                <div>
-                    <v-btn
-                        class="pull-right"
-                        color="blue-darken-1"
-                        variant="flat"
-                        @click="save(placeholderStore.model.url)">
-                        Save Url
-                    </v-btn>
-                </div>
-            </v-col>
-        </v-row>
-        <v-row>
             <v-col class="view-footer" />
         </v-row>
     </v-container>
@@ -86,9 +73,8 @@
     import { useDebounce } from '@vueuse/core';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
-    import { watch, computed, onMounted, ref, toRaw } from 'vue';
+    import { watch, computed, ref, toRaw } from 'vue';
     import TextareaField from '@/components/formFields/TextareaField.vue';
-    import TextField from '@/components/formFields/TextField.vue';
     import useEventsBus from '@cmp/eventBus';
     import useLoremIpsum from '@cmp/loremIpsum';
 
@@ -118,9 +104,40 @@
     // Generates URL and updates lorem ipsum text when paragraph/word count changes.
     const { generateUrl, generateLoremIpsum } = useLoremIpsum();
 
+    const output = ref('');
+
     function onGenerateUrlClick() {
-        placeholderStore.model.url.text = generateUrl();
+        output.value = generateUrl();
+        placeholderStore.model.body.text = output.value;
+
+        placeholderStore.model.body.guid = uuidv4();
+        placeholderStore.model.body.timestamp = Date.now();
+        placeholderStore.model.body.tags = [
+            {
+                label: 'Type',
+                value: STORAGE.URL,
+            },
+        ];
     }
+
+    function countWordsAndParagraphs(text) {
+        // Count paragraphs (split by two or more newlines)
+        const paragraphs = text.trim().split(/\n\s*\n/).filter((p) => p.length > 0);
+        const paragraphCount = paragraphs.length;
+
+        // Count words (split by whitespace)
+        const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
+        const wordCount = words.length / paragraphCount;
+
+        return {
+            wordCount,
+            paragraphCount,
+        };
+    }
+
+    // Save Object Generation and Size Calculation
+    // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
+    const kbSize = ref(false);
 
     watch(
         [
@@ -128,31 +145,14 @@
             () => placeholderStore.model.body.wordCount,
         ],
         () => {
-            placeholderStore.model.body.text = generateLoremIpsum(
+            output.value = generateLoremIpsum(
                 placeholderStore.model.body.paragraphCount,
                 placeholderStore.model.body.wordCount,
             );
-        },
-        { immediate: true },
-    );
+            placeholderStore.model.body.text = output.value;
 
-    watch(
-        () => placeholderStore.model.url.text,
-        () => {
-            placeholderStore.model.url.guid = uuidv4();
-            placeholderStore.model.url.timestamp = Date.now();
-            placeholderStore.model.url.tags = [{ label: 'Type', value: STORAGE.URL }];
-        },
-        { immediate: true },
-    );
+            const counter = countWordsAndParagraphs(placeholderStore.model.body.text);
 
-    // Save Object Generation and Size Calculation
-    // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
-    const kbSize = ref(false);
-
-    watch(
-        () => placeholderStore.model.body.text,
-        () => {
             // update model object
             placeholderStore.model.body.guid = uuidv4();
             placeholderStore.model.body.timestamp = Date.now();
@@ -162,12 +162,12 @@
                     value: STORAGE.TEXT,
                 },
                 {
-                    label: 'Word Count',
-                    value: placeholderStore.model.body.wordCount,
+                    label: 'Words',
+                    value: counter.wordCount,
                 },
                 {
-                    label: 'Paragraph Count',
-                    value: placeholderStore.model.body.paragraphCount,
+                    label: 'Paragraphs',
+                    value: counter.paragraphCount,
                 },
             ];
 
@@ -176,6 +176,13 @@
                 .stringify(placeholderStore.model.body);
             const size = new Blob([jsonString]).size / 1024;
             kbSize.value = Math.round(size * 100) / 100;
+        },
+        { immediate: true },
+    );
+
+    watch(
+        () => placeholderStore.model.body.text,
+        () => {
         },
         { immediate: true },
     );
@@ -209,11 +216,8 @@
         }
     }
 
-    // Initial Setup on Component Mount
-    // Initializes URL and lorem ipsum text with current paragraph/word count.
-    onMounted(() => {
-        placeholderStore.model.url.text = generateUrl();
-    });
+    function onTextFieldFocus() {
+    }
 </script>
 
 <style scoped lang="scss">

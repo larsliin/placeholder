@@ -13,6 +13,8 @@
             density="compact"
             spellcheck="false"
             v-model="vModel"
+            @focus="$emit(EMITS.FOCUS)"
+            @blur="$emit(EMITS.BLUR)"
             :flat="true" />
     </div>
 </template>
@@ -37,6 +39,8 @@
 
     defineEmits([
         EMITS.CLICK,
+        EMITS.FOCUS,
+        EMITS.BLUR,
     ]);
 
 </script>

@@ -6,12 +6,14 @@
                     <v-col cols="12">
                         <div class="saved-list"
                             v-if="placeholderStore.savedPlaceholders.length">
-                            <PlaceholderSavedItem
-                                v-for="(item, index) in placeholderStore.savedPlaceholders"
-                                :selected="placeholderStore.selectedSavedGuid === item.guid"
-                                :key="index"
-                                :savedItem="item"
-                                @click.stop="onItemClick(item)" />
+                            <v-list>
+                                <PlaceholderSavedItem
+                                    v-for="(item, index) in placeholderStore.savedPlaceholders"
+                                    :selected="placeholderStore.selectedSavedGuid === item.guid"
+                                    :key="index"
+                                    :savedItem="item"
+                                    @click.stop="onItemClick(item)" />
+                            </v-list>
                         </div>
                     </v-col>
                 </v-row>

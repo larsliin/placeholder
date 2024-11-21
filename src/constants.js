@@ -4,6 +4,8 @@ import UiText from './models/Text';
 export const EMITS = Object.freeze({
     CLICK: 'click',
     COPY: 'copy',
+    BLUR: 'blur',
+    FOCUS: 'focus',
     SAVE: 'save',
     UPDATE_TAB: 'updateTab',
 });
