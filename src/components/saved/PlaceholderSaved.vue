@@ -66,12 +66,16 @@
             () => placeholderStore.selectedSavedGuid,
         ],
         (newVal) => {
-            if (newVal && newVal.length) {
-                placeholderStore.selectedSavedGuid = placeholderStore.selectedSavedGuid
-                    || placeholderStore.savedPlaceholders[0].guid;
+            try {
+                if (newVal && newVal[0]?.length) {
+                    placeholderStore.selectedSavedGuid = placeholderStore.selectedSavedGuid
+                        || placeholderStore.savedPlaceholders[0]?.guid;
 
-                activeItemModel.value = placeholderStore.savedPlaceholders
-                    .find((e) => e.guid === placeholderStore.selectedSavedGuid);
+                    activeItemModel.value = placeholderStore.savedPlaceholders
+                        .find((e) => e.guid === placeholderStore.selectedSavedGuid) || null;
+                }
+            } catch (error) {
+                console.error(error);
             }
         },
         {

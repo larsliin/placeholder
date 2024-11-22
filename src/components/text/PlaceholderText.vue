@@ -43,6 +43,10 @@
                     @focus="onTextFieldFocus()"
                     @blur="onTextFieldFocus()"
                     @click="onCopy($event)" />
+            </v-col>
+        </v-row>
+        <v-row>
+            <v-col class="view-footer">
                 <div class="text-save-button-wrp">
                     <div>
                         <v-btn
@@ -59,10 +63,8 @@
                         {{ kbSize }}KB (8KB limit exceeded)
                     </div>
                 </div>
+
             </v-col>
-        </v-row>
-        <v-row>
-            <v-col class="view-footer" />
         </v-row>
     </v-container>
 </template>
@@ -162,12 +164,12 @@
                     value: STORAGE.TEXT,
                 },
                 {
-                    label: 'Words',
-                    value: counter.wordCount,
-                },
-                {
                     label: 'Paragraphs',
                     value: counter.paragraphCount,
+                },
+                {
+                    label: 'Words',
+                    value: counter.wordCount,
                 },
             ];
 
@@ -176,13 +178,6 @@
                 .stringify(placeholderStore.model.body);
             const size = new Blob([jsonString]).size / 1024;
             kbSize.value = Math.round(size * 100) / 100;
-        },
-        { immediate: true },
-    );
-
-    watch(
-        () => placeholderStore.model.body.text,
-        () => {
         },
         { immediate: true },
     );

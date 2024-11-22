@@ -17,7 +17,7 @@
     "vuetify": "^3.3.15"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "^2.0.0-beta.21",
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
     "@mdi/font": "^7.2.96",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vue/eslint-config-airbnb": "8.0.0",
