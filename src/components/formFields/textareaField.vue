@@ -47,11 +47,14 @@
 
     const textarea = ref();
     const textareaPaddingRight = ref(0);
+    const buttonRight = ref(0);
 
     onMounted(() => {
         const textareaElem = textarea.value.$el.querySelector('textarea');
         const scrollbarWidth = textareaElem.offsetWidth - textareaElem.clientWidth;
         textareaPaddingRight.value = `${45 - scrollbarWidth}px`;
+
+        buttonRight.value = `${(scrollbarWidth ? 0 : 7) + scrollbarWidth}px`;
     });
 </script>
 
@@ -67,7 +70,7 @@
 
     .icon-button {
         position: absolute;
-        right: 15px;
+        right: v-bind(buttonRight);
         top: 7px;
         z-index: 1;
         padding: 5px;
