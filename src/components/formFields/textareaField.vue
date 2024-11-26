@@ -8,6 +8,7 @@
         </button>
         <v-textarea
             class="output-paragraph"
+            ref="textarea"
             :rows="rows"
             no-resize
             density="compact"
@@ -21,6 +22,7 @@
 
 <script setup>
     import { EMITS } from '@/constants';
+    import { ref, onMounted } from 'vue';
 
     defineProps({
         icon: {
@@ -43,13 +45,21 @@
         EMITS.BLUR,
     ]);
 
+    const textarea = ref();
+    const textareaPaddingRight = ref(0);
+
+    onMounted(() => {
+        const textareaElem = textarea.value.$el.querySelector('textarea');
+        const scrollbarWidth = textareaElem.offsetWidth - textareaElem.clientWidth;
+        textareaPaddingRight.value = `${45 - scrollbarWidth}px`;
+    });
 </script>
 
 <style scoped lang="scss">
 .output-paragraph {
     :deep(textarea){
         font-size: 14px;
-        padding-right: 30px;
+        padding-right: v-bind(textareaPaddingRight);
     }
 }
 .container {
