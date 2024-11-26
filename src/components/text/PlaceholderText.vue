@@ -26,6 +26,13 @@
                 </v-row>
                 <v-row>
                     <v-col>
+                        <v-checkbox
+                            v-model="prefixLoremCb"
+                            label="Prefix Lorem Ipsum" />
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col>
                         <v-btn
                             color="blue-darken-1"
                             variant="tonal"
@@ -104,8 +111,6 @@
 
     // URL Generation and Text Update
     // Generates URL and updates lorem ipsum text when paragraph/word count changes.
-    // const { generateUrl, generateLoremIpsum } = useLoremIpsum();
-
     const output = ref('');
 
     function onGenerateUrlClick() {
@@ -141,8 +146,11 @@
     // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
     const kbSize = ref(false);
 
+    const prefixLoremCb = ref(true);
+
     watch(
         [
+            prefixLoremCb,
             () => placeholderStore.model.body.paragraphCount,
             () => placeholderStore.model.body.wordCount,
         ],
@@ -150,6 +158,7 @@
             output.value = generateLoremIpsum(
                 placeholderStore.model.body.paragraphCount,
                 placeholderStore.model.body.wordCount,
+                prefixLoremCb.value,
             );
             placeholderStore.model.body.text = output.value;
 
@@ -210,8 +219,9 @@
             emit(EMITS.COPY, { success: false });
         }
     }
+    // eslint-disable-next-line
+    function onTextFieldFocus(params) {
 
-    function onTextFieldFocus() {
     }
 </script>
 

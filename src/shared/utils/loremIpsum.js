@@ -15,7 +15,7 @@ function insertRandomPunctuation(textArray, mandatoryWordsLength) {
         }
 
         // Randomly decide whether to add punctuation after the word
-        if (Math.random() < 0.2 && index !== textArray.length - 1) { // 20% chance, avoid at end
+        if (Math.random() < 0.1 && index !== textArray.length - 1) { // 20% chance, avoid at end
             const randomPunctuation = punctuationMarks[
                 Math.floor(Math.random() * punctuationMarks.length)];
             // Append the punctuation directly to the word without a space
@@ -28,7 +28,6 @@ function insertRandomPunctuation(textArray, mandatoryWordsLength) {
 
 // eslint-disable-next-line
 function generateSingleParagraph(wordCount = 100, mandatoryWords = [], noSpacesOrPunctuation = false) {
-
     const loremIpsumWords = [
         'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
         'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
@@ -86,11 +85,12 @@ function generateSingleParagraph(wordCount = 100, mandatoryWords = [], noSpacesO
     return `${capitalizeSentences(punctuatedText)}.`;
 }
 
-export function generateLoremIpsum(paragraphCount = 3, wordsPerParagraph = 100) {
+// eslint-disable-next-line
+export function generateLoremIpsum(paragraphCount = 3, wordsPerParagraph = 100, prefixLorem = true) {
     return Array.from({ length: paragraphCount }, (_, i) => {
         if (i === 0) {
-        // First paragraph starts with "lorem ipsum"
-            return generateSingleParagraph(wordsPerParagraph, ['lorem', 'ipsum']);
+            const mandatoryWords = prefixLorem ? ['lorem', 'ipsum'] : [];
+            return generateSingleParagraph(wordsPerParagraph, mandatoryWords);
         }
         // Subsequent paragraphs are generated without mandatory starting words
         return generateSingleParagraph(wordsPerParagraph);

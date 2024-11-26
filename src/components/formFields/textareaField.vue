@@ -52,9 +52,9 @@
     onMounted(() => {
         const textareaElem = textarea.value.$el.querySelector('textarea');
         const scrollbarWidth = textareaElem.offsetWidth - textareaElem.clientWidth;
-        textareaPaddingRight.value = `${45 - scrollbarWidth}px`;
+        textareaPaddingRight.value = `${50 - scrollbarWidth}px`;
 
-        buttonRight.value = `${(scrollbarWidth ? 0 : 7) + scrollbarWidth}px`;
+        buttonRight.value = `${(scrollbarWidth ? 0 : 10) + scrollbarWidth}px`;
     });
 </script>
 
