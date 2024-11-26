@@ -7,8 +7,8 @@
 <script setup>
     import { onMounted, ref, watch } from 'vue';
     import { PLACEHOLDER } from '@/constants';
-    import useColors from '@cmp/colors';
     import { usePlaceholderStore } from '@stores/placeholder';
+    import { isHexBelow50Percent } from '@/shared/utils/colors';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -42,8 +42,6 @@
     const imgBlack = ref(null);
     const imgWhite = ref(null);
 
-    const colors = useColors();
-
     const canvas = ref();
     placeholderStore.canvas = canvas;
 
@@ -53,7 +51,7 @@
         }
 
         const ctx = canvas.value.getContext('2d');
-        const isHexBelow50Percent = colors.isHexBelow50Percent(placeholderStore.model.color);
+        const isColorDark = isHexBelow50Percent(placeholderStore.model.color);
 
         canvas.value.width = placeholderStore.model.imageWidth;
         canvas.value.height = placeholderStore.model.imageHeight;
@@ -64,8 +62,8 @@
 
         // gradient
         // Calculate position
-        const centerX = isHexBelow50Percent ? placeholderStore.model.imageWidth : 0;
-        const centerY = isHexBelow50Percent ? 0 : placeholderStore.model.imageHeight;
+        const centerX = isColorDark ? placeholderStore.model.imageWidth : 0;
+        const centerY = isColorDark ? 0 : placeholderStore.model.imageHeight;
 
         // Set the radius to fit within the canvas (half of the smallest dimension)
         const radius = Math.min(
@@ -78,8 +76,8 @@
         const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
 
         // Define gradient color stops
-        const gradientStart = isHexBelow50Percent ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)';
-        const gradientEnd = isHexBelow50Percent ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0)';
+        const gradientStart = isColorDark ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.15)';
+        const gradientEnd = isColorDark ? 'rgba(255, 255, 255, 0)' : 'rgba(0, 0, 0, 0)';
         gradient.addColorStop(0, gradientStart);
         gradient.addColorStop(1, gradientEnd);
 
@@ -88,7 +86,7 @@
         ctx.fillRect(0, 0, placeholderStore.model.imageWidth, placeholderStore.model.imageHeight);
 
         // placeholder image
-        const image = isHexBelow50Percent ? imgWhite.value : imgBlack.value;
+        const image = isColorDark ? imgWhite.value : imgBlack.value;
 
         if (image) {
             const dims = getImageDims(image);

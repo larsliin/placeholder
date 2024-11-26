@@ -71,6 +71,7 @@
 
 <script setup>
     import { EMITS, STORAGE } from '@/constants';
+    import { generateLoremIpsum, generateUrl } from '@/shared/utils/loremIpsum';
     import { mdiContentCopy } from '@mdi/js';
     import { useDebounce } from '@vueuse/core';
     import { usePlaceholderStore } from '@stores/placeholder';
@@ -78,7 +79,6 @@
     import { watch, computed, ref, toRaw } from 'vue';
     import TextareaField from '@/components/formFields/TextareaField.vue';
     import useEventsBus from '@cmp/eventBus';
-    import useLoremIpsum from '@cmp/loremIpsum';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -104,7 +104,7 @@
 
     // URL Generation and Text Update
     // Generates URL and updates lorem ipsum text when paragraph/word count changes.
-    const { generateUrl, generateLoremIpsum } = useLoremIpsum();
+    // const { generateUrl, generateLoremIpsum } = useLoremIpsum();
 
     const output = ref('');
 
