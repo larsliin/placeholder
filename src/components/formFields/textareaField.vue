@@ -22,7 +22,7 @@
 
 <script setup>
     import { EMITS } from '@/constants';
-    import { ref, onMounted } from 'vue';
+    import { nextTick, ref, watch, onMounted } from 'vue';
 
     defineProps({
         icon: {
@@ -49,12 +49,21 @@
     const textareaPaddingRight = ref(0);
     const buttonRight = ref(0);
 
-    onMounted(() => {
+    async function setScrollBarOffset() {
+        await nextTick();
+
         const textareaElem = textarea.value.$el.querySelector('textarea');
         const scrollbarWidth = textareaElem.offsetWidth - textareaElem.clientWidth;
-        textareaPaddingRight.value = `${50 - scrollbarWidth}px`;
+        textareaPaddingRight.value = `${50 - (scrollbarWidth ? scrollbarWidth - 5 : 0)}px`;
 
-        buttonRight.value = `${(scrollbarWidth ? 0 : 10) + scrollbarWidth}px`;
+        buttonRight.value = `${(scrollbarWidth ? 0 : 5) + scrollbarWidth}px`;
+    }
+    onMounted(() => {
+        setScrollBarOffset();
+    });
+
+    watch(vModel, async () => {
+        setScrollBarOffset();
     });
 </script>
 

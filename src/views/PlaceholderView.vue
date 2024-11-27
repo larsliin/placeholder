@@ -87,16 +87,19 @@
                 mimetype,
                 wordCount,
                 paragraphCount,
-                selected] = await Promise.all([
-                    placeholderStore.get_syncStorage(STORAGE.TAB),
-                    placeholderStore.get_syncStorage(STORAGE.IMAGE_COLOR),
-                    placeholderStore.get_syncStorage(STORAGE.IMAGE_WIDTH),
-                    placeholderStore.get_syncStorage(STORAGE.IMAGE_HEIGHT),
-                    placeholderStore.get_syncStorage(STORAGE.IMAGE_MIMETYPE),
-                    placeholderStore.get_syncStorage(STORAGE.WORD_COUNT),
-                    placeholderStore.get_syncStorage(STORAGE.PARAGRAPH_COUNT),
-                    placeholderStore.get_syncStorage(STORAGE.SELECTED_SAVED_ITEM),
-                ]);
+                prefixLoremIpsum,
+                selected,
+            ] = await Promise.all([
+                placeholderStore.get_syncStorage(STORAGE.TAB),
+                placeholderStore.get_syncStorage(STORAGE.IMAGE_COLOR),
+                placeholderStore.get_syncStorage(STORAGE.IMAGE_WIDTH),
+                placeholderStore.get_syncStorage(STORAGE.IMAGE_HEIGHT),
+                placeholderStore.get_syncStorage(STORAGE.IMAGE_MIMETYPE),
+                placeholderStore.get_syncStorage(STORAGE.WORD_COUNT),
+                placeholderStore.get_syncStorage(STORAGE.PARAGRAPH_COUNT),
+                placeholderStore.get_syncStorage(STORAGE.PREFIX_LOREM_IPSUM),
+                placeholderStore.get_syncStorage(STORAGE.SELECTED_SAVED_ITEM),
+            ]);
             placeholderStore.model.body = {};
             placeholderStore.model.url = {};
 
@@ -107,6 +110,7 @@
             placeholderStore.model.color = color || PLACEHOLDER.CANVAS.swatches[0][0];
             placeholderStore.model.mimetype = mimetype || PLACEHOLDER.MIME_TYPES[0].value;
 
+            placeholderStore.model.body.prefixLoremIpsum = !!prefixLoremIpsum;
             placeholderStore.model.body.wordCount = wordCount || PLACEHOLDER.TEXT.wordCount;
             placeholderStore.model.body.paragraphCount = paragraphCount
                 || PLACEHOLDER.TEXT.paragraphCount;

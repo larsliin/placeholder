@@ -27,7 +27,7 @@
                 <v-row>
                     <v-col>
                         <v-checkbox
-                            v-model="prefixLoremCb"
+                            v-model="placeholderStore.model.body.prefixLoremIpsum"
                             label="Prefix Lorem Ipsum" />
                     </v-col>
                 </v-row>
@@ -62,7 +62,7 @@
                             variant="flat"
                             :disabled="kbSize >= 8"
                             @click="save(placeholderStore.model.body)">
-                            Save Body Text
+                            Save
                         </v-btn>
                     </div>
                     <div class="err-msg"
@@ -142,15 +142,18 @@
         };
     }
 
+    // Watches checkbox prefix Lorem Ipsum
+    watch(() => placeholderStore.model.body.prefixLoremIpsum, (newVal) => {
+        placeholderStore.set_syncStorage({ [STORAGE.PREFIX_LOREM_IPSUM]: newVal });
+    });
+
     // Save Object Generation and Size Calculation
     // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
     const kbSize = ref(false);
 
-    const prefixLoremCb = ref(true);
-
     watch(
         [
-            prefixLoremCb,
+            () => placeholderStore.model.body.prefixLoremIpsum,
             () => placeholderStore.model.body.paragraphCount,
             () => placeholderStore.model.body.wordCount,
         ],
@@ -158,7 +161,7 @@
             output.value = generateLoremIpsum(
                 placeholderStore.model.body.paragraphCount,
                 placeholderStore.model.body.wordCount,
-                prefixLoremCb.value,
+                placeholderStore.model.body.prefixLoremIpsum,
             );
             placeholderStore.model.body.text = output.value;
 
@@ -221,7 +224,6 @@
     }
     // eslint-disable-next-line
     function onTextFieldFocus(params) {
-
     }
 </script>
 

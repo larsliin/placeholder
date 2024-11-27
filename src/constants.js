@@ -22,6 +22,7 @@ export const STORAGE = Object.freeze({
     TEXT: 'text',
     URL: 'url',
     WORD_COUNT: 'word_count',
+    PREFIX_LOREM_IPSUM: 'prefix_lorem_ipsum',
 });
 
 export const PLACEHOLDER = Object.freeze({
