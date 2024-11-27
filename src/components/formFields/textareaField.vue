@@ -56,7 +56,7 @@
         const scrollbarWidth = textareaElem.offsetWidth - textareaElem.clientWidth;
         textareaPaddingRight.value = `${50 - (scrollbarWidth ? scrollbarWidth - 5 : 0)}px`;
 
-        buttonRight.value = `${(scrollbarWidth ? 0 : 5) + scrollbarWidth}px`;
+        buttonRight.value = `${(scrollbarWidth ? 0 : 10) + scrollbarWidth}px`;
     }
     onMounted(() => {
         setScrollBarOffset();
