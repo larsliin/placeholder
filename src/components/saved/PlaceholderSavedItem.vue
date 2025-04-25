@@ -179,23 +179,39 @@
     });
 
     async function onDeleteClick() {
-        await placeholderStore.delete_syncStorageItem(props.savedItem.guid);
+        // Get the item to be deleted
+        const deletedItemGuid = props.savedItem.guid;
 
-        const savedPlaceholdersFiltered = placeholderStore.savedPlaceholders
-            .filter((e) => e.guid !== props.savedItem.guid);
+        // Delete the item from storage
+        await placeholderStore.delete_syncStorageItem(deletedItemGuid);
 
-        // find the index of the current selected guid
-        let index = 0;
-        if (placeholderStore.selectedSavedGuid === props.savedItem.guid) {
-            index = Math.max(placeholderStore.savedPlaceholders
-                .findIndex((e) => e.guid === props.savedItem.guid) - 1, 0);
+        // Find the index of the deleted item
+        const deletedIndex = placeholderStore.savedPlaceholders.findIndex(
+            (e) => e.guid === deletedItemGuid,
+        );
+
+        // Determine new selected index if necessary
+        let newSelectedIndex = 0;
+        if (placeholderStore.selectedSavedGuid === deletedItemGuid) {
+            newSelectedIndex = Math.max(deletedIndex - 1, 0);
+        } else {
+            // Find current selected index if it wasn't the deleted item
+            const currentSelectedIndex = placeholderStore.savedPlaceholders.findIndex(
+                (e) => e.guid === placeholderStore.selectedSavedGuid,
+            );
+            // If selected item is after deleted item, adjust index
+            newSelectedIndex = currentSelectedIndex > deletedIndex
+                ? Math.max(currentSelectedIndex - 1, 0)
+                : currentSelectedIndex;
         }
 
-        placeholderStore.savedPlaceholders = savedPlaceholdersFiltered;
+        // Modify the array using splice to preserve object references
+        // This is key to preventing re-rendering of all thumbnails
+        placeholderStore.savedPlaceholders.splice(deletedIndex, 1);
 
-        // update the selected guid
+        // Update the selected guid
         if (placeholderStore.savedPlaceholders.length) {
-            placeholderStore.selectedSavedGuid = placeholderStore.savedPlaceholders[index].guid;
+            placeholderStore.selectedSavedGuid = placeholderStore.savedPlaceholders[newSelectedIndex].guid;
             placeholderStore.set_syncStorage({
                 [STORAGE.SELECTED_SAVED_ITEM]: placeholderStore.selectedSavedGuid,
             });
@@ -204,9 +220,11 @@
             placeholderStore.delete_syncStorageItem(STORAGE.SELECTED_SAVED_ITEM);
         }
 
+        // Update the saved items array in storage
         const guidArrFiltered = placeholderStore.savedPlaceholders.map((e) => e.guid);
         placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: guidArrFiltered });
 
+        // If no items left, update tab
         if (!guidArrFiltered?.length) {
             emit(EMITS.UPDATE_TAB, { id: 1 });
         }

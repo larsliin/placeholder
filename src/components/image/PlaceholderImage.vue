@@ -128,7 +128,7 @@
             const arr = savedObj ? [...savedObj, imageObject.guid] : [imageObject.guid];
             await placeholderStore.set_syncStorage({ [STORAGE.SAVED_ITEMS]: arr });
 
-            // Show success message (optional)
+            // Show success message
             emit(EMITS.SAVE, { success: true });
         } catch (error) {
             console.error(error);

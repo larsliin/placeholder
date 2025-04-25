@@ -8,9 +8,9 @@
                             v-if="placeholderStore.savedPlaceholders.length">
                             <v-list>
                                 <PlaceholderSavedItem
-                                    v-for="(item, index) in sortedPlaceholders"
+                                    v-for="item in sortedPlaceholders"
                                     :selected="placeholderStore.selectedSavedGuid === item.guid"
-                                    :key="index"
+                                    :key="item.guid"
                                     :savedItem="item"
                                     @click.stop="onItemClick(item)" />
                             </v-list>

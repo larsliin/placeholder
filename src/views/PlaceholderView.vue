@@ -66,6 +66,23 @@
         }
     });
 
+    // Watch for save event and show success/error feedback
+    watch(() => bus.value.get(EMITS.SAVE), async (args) => {
+        if (args[0].success) {
+            showSuccess.value = false;
+
+            await nextTick();
+
+            showSuccess.value = true;
+        } else {
+            showError.value = false;
+
+            await nextTick();
+
+            showError.value = true;
+        }
+    });
+
     const tab = ref();
 
     watch(() => bus.value.get(EMITS.UPDATE_TAB), async (args) => {
