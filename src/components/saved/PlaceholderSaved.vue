@@ -82,13 +82,27 @@
 
         // For image type items, update the model properties to match the saved item
         if (isImageType.value) {
-            // Extract size from tags
-            const sizeTag = item.tags.find((tag) => tag.label === 'Size');
-            if (sizeTag && sizeTag.value) {
-                const dimensions = sizeTag.value.split('x');
-                if (dimensions.length === 2) {
-                    placeholderStore.model.imageWidth = parseInt(dimensions[0]);
-                    placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+            // Extract width and height from tags
+            const widthTag = item.tags.find((tag) => tag.label === 'Width');
+            const heightTag = item.tags.find((tag) => tag.label === 'Height');
+            
+            if (widthTag && widthTag.value) {
+                placeholderStore.model.imageWidth = parseInt(widthTag.value);
+            }
+            
+            if (heightTag && heightTag.value) {
+                placeholderStore.model.imageHeight = parseInt(heightTag.value);
+            }
+            
+            // For backward compatibility with older saved items using Size tag
+            if (!widthTag || !heightTag) {
+                const sizeTag = item.tags.find((tag) => tag.label === 'Size');
+                if (sizeTag && sizeTag.value) {
+                    const dimensions = sizeTag.value.split('x');
+                    if (dimensions.length === 2) {
+                        placeholderStore.model.imageWidth = parseInt(dimensions[0]);
+                        placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+                    }
                 }
             }
 
@@ -140,14 +154,29 @@
 
                     // Update model properties for the selected image if it's an image type
                     if (isImageType.value && activeItemModel.value) {
-                        // Same code as in onItemClick to update model properties
                         const item = activeItemModel.value;
-                        const sizeTag = item.tags.find((tag) => tag.label === 'Size');
-                        if (sizeTag && sizeTag.value) {
-                            const dimensions = sizeTag.value.split('x');
-                            if (dimensions.length === 2) {
-                                placeholderStore.model.imageWidth = parseInt(dimensions[0]);
-                                placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+                        
+                        // Extract width and height from tags
+                        const widthTag = item.tags.find((tag) => tag.label === 'Width');
+                        const heightTag = item.tags.find((tag) => tag.label === 'Height');
+                        
+                        if (widthTag && widthTag.value) {
+                            placeholderStore.model.imageWidth = parseInt(widthTag.value);
+                        }
+                        
+                        if (heightTag && heightTag.value) {
+                            placeholderStore.model.imageHeight = parseInt(heightTag.value);
+                        }
+                        
+                        // For backward compatibility with older saved items using Size tag
+                        if (!widthTag || !heightTag) {
+                            const sizeTag = item.tags.find((tag) => tag.label === 'Size');
+                            if (sizeTag && sizeTag.value) {
+                                const dimensions = sizeTag.value.split('x');
+                                if (dimensions.length === 2) {
+                                    placeholderStore.model.imageWidth = parseInt(dimensions[0]);
+                                    placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+                                }
                             }
                         }
 

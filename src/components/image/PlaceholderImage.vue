@@ -11,36 +11,29 @@
             </v-col>
         </v-row>
         <v-row>
-            <v-col
-                cols="12">
-                <v-row>
-                    <v-col cols="6">
-                        <div class="image-save-button-wrp">
-                            <div>
-                                <v-btn
-                                    color="blue-darken-1"
-                                    variant="flat"
-                                    :disabled="kbSize >= 8"
-                                    @click="saveToStorage()">
-                                    SAVE
-                                </v-btn>
-                            </div>
-                            <div class="err-msg"
-                                :class="{ visible: kbSize >= 8 }">
-                                {{ kbSize }}KB (8KB limit exceeded)
-                            </div>
-                        </div>
-                    </v-col>
-                    <v-col cols="6">
+            <v-col cols="12">
+                <div class="button-container">
+                    <div class="buttons-wrapper">
                         <v-btn
-                            class="pull-right"
                             color="blue-darken-1"
-                            variant="flat"
+                            variant="tonal"
+                            class="mr-2"
                             @click="onSaveClick()">
                             DOWNLOAD
                         </v-btn>
-                    </v-col>
-                </v-row>
+                        <v-btn
+                            color="blue-darken-1"
+                            variant="flat"
+                            :disabled="kbSize >= 8"
+                            @click="saveToStorage()">
+                            SAVE
+                        </v-btn>
+                    </div>
+                    <div class="err-msg"
+                        :class="{ visible: kbSize >= 8 }">
+                        {{ kbSize }}KB (8KB limit exceeded)
+                    </div>
+                </div>
             </v-col>
         </v-row>
     </v-container>
@@ -61,6 +54,9 @@
 
     // Calculate storage size
     const calculateStorageSize = () => {
+        // Get file type from mimetype
+        const fileType = placeholderStore.model.mimetype.split('/')[1];
+        
         const imageObject = {
             guid: uuidv4(),
             timestamp: Date.now(),
@@ -75,12 +71,20 @@
                     value: 'image',
                 },
                 {
-                    label: 'Size',
-                    value: `${placeholderStore.model.imageWidth}x${placeholderStore.model.imageHeight}`,
+                    label: 'Width',
+                    value: placeholderStore.model.imageWidth,
+                },
+                {
+                    label: 'Height',
+                    value: placeholderStore.model.imageHeight,
                 },
                 {
                     label: 'Color',
                     value: placeholderStore.model.color || '#ffffff',
+                },
+                {
+                    label: 'Format',
+                    value: fileType,
                 },
             ],
         };
@@ -150,19 +154,21 @@
 </script>
 
 <style scoped lang="scss">
-.pull-right {
-    float: right;
-}
-
-.image-save-button-wrp {
+.button-container {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
+}
+
+.buttons-wrapper {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .err-msg {
     color: rgb(var(--v-theme-error));
     font-size: 12px;
-    text-align: left;
+    text-align: right;
     margin-top: 4px;
     visibility: hidden;
 
