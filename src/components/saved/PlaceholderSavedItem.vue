@@ -1,7 +1,8 @@
 <template>
     <v-list-item
         v-if="savedItem"
-        :active="selected">
+        :active="selected"
+        @click="$emit('click', savedItem)">
         <template v-slot:prepend v-if="isImageType">
             <div class="thumbnail-container">
                 <canvas ref="thumbnailCanvas" class="thumbnail-canvas"></canvas>
