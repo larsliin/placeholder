@@ -49,12 +49,12 @@
 </template>
 
 <script setup>
-    import { EMITS, STORAGE, PLACEHOLDER } from '@/constants';
+    import { EMITS, STORAGE } from '@/constants';
     import { mdiContentCopy } from '@mdi/js';
-    import { ref, watch, computed, onMounted } from 'vue';
+    import { ref, watch, computed } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
     import PlaceholderSavedItem from '@/components/saved/PlaceholderSavedItem.vue';
-    import TextareaField from '@/components/formFields/TextareaField.vue';
+    import TextareaField from '@/components/formFields/textareaField.vue';
     import PlaceholderImageCanvas from '@/components/image/PlaceholderImageCanvas.vue';
     import useEventsBus from '@cmp/eventBus';
 
@@ -72,8 +72,8 @@
     });
 
     // Computed property to sort placeholders in descending order by timestamp
-    const sortedPlaceholders = computed(() => [...placeholderStore.savedPlaceholders].sort((a, b) => b.timestamp - a.timestamp, // Descending order (newest first)
-    ));
+    const sortedPlaceholders = computed(() => [...placeholderStore.savedPlaceholders]
+        .sort((a, b) => b.timestamp - a.timestamp));
 
     function onItemClick(item) {
         activeItemModel.value = item;
@@ -87,11 +87,11 @@
             const heightTag = item.tags.find((tag) => tag.label === 'Height');
 
             if (widthTag && widthTag.value) {
-                placeholderStore.model.imageWidth = parseInt(widthTag.value);
+                placeholderStore.model.imageWidth = parseInt(widthTag.value, 10);
             }
 
             if (heightTag && heightTag.value) {
-                placeholderStore.model.imageHeight = parseInt(heightTag.value);
+                placeholderStore.model.imageHeight = parseInt(heightTag.value, 10);
             }
 
             // For backward compatibility with older saved items using Size tag
@@ -100,8 +100,8 @@
                 if (sizeTag && sizeTag.value) {
                     const dimensions = sizeTag.value.split('x');
                     if (dimensions.length === 2) {
-                        placeholderStore.model.imageWidth = parseInt(dimensions[0]);
-                        placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+                        placeholderStore.model.imageWidth = parseInt(dimensions[0], 10);
+                        placeholderStore.model.imageHeight = parseInt(dimensions[1], 10);
                     }
                 }
             }
@@ -161,11 +161,11 @@
                         const heightTag = item.tags.find((tag) => tag.label === 'Height');
 
                         if (widthTag && widthTag.value) {
-                            placeholderStore.model.imageWidth = parseInt(widthTag.value);
+                            placeholderStore.model.imageWidth = parseInt(widthTag.value, 10);
                         }
 
                         if (heightTag && heightTag.value) {
-                            placeholderStore.model.imageHeight = parseInt(heightTag.value);
+                            placeholderStore.model.imageHeight = parseInt(heightTag.value, 10);
                         }
 
                         // For backward compatibility with older saved items using Size tag
@@ -174,8 +174,10 @@
                             if (sizeTag && sizeTag.value) {
                                 const dimensions = sizeTag.value.split('x');
                                 if (dimensions.length === 2) {
-                                    placeholderStore.model.imageWidth = parseInt(dimensions[0]);
-                                    placeholderStore.model.imageHeight = parseInt(dimensions[1]);
+                                    placeholderStore.model
+                                        .imageWidth = parseInt(dimensions[0], 10);
+                                    placeholderStore.model
+                                        .imageHeight = parseInt(dimensions[1], 10);
                                 }
                             }
                         }

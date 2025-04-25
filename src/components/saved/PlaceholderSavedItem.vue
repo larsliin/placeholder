@@ -212,7 +212,8 @@
 
         // Update the selected guid
         if (placeholderStore.savedPlaceholders.length) {
-            placeholderStore.selectedSavedGuid = placeholderStore.savedPlaceholders[newSelectedIndex].guid;
+            placeholderStore.selectedSavedGuid = placeholderStore
+                .savedPlaceholders[newSelectedIndex].guid;
             placeholderStore.set_syncStorage({
                 [STORAGE.SELECTED_SAVED_ITEM]: placeholderStore.selectedSavedGuid,
             });

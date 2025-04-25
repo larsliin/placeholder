@@ -84,7 +84,7 @@
     import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
     import { watch, computed, ref, toRaw } from 'vue';
-    import TextareaField from '@/components/formFields/TextareaField.vue';
+    import TextareaField from '@/components/formFields/textareaField.vue';
     import useEventsBus from '@cmp/eventBus';
 
     const placeholderStore = usePlaceholderStore();
