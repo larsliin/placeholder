@@ -62,7 +62,7 @@
             return false;
         }
         return props.savedItem.tags.some(
-            (tag) => tag.label === 'Type' && tag.value === 'image'
+            (tag) => tag.label === 'Type' && tag.value === 'image',
         );
     });
 
@@ -71,7 +71,8 @@
         const containerRatio = containerWidth / containerHeight;
         const imageWidth = img.width;
         const imageHeight = img.height;
-        let width, height;
+        let width; let
+            height;
 
         if (containerRatio < 1) {
             width = containerWidth;
@@ -92,7 +93,7 @@
         if (!thumbnailCanvas.value || !isImageType.value || !props.savedItem) return;
 
         const ctx = thumbnailCanvas.value.getContext('2d');
-        const width = 50;  // Small thumbnail width
+        const width = 50; // Small thumbnail width
         const height = 40; // Small thumbnail height
         const color = props.savedItem.color || '#ffffff';
         const isColorDark = isHexBelow50Percent(color);
@@ -243,9 +244,11 @@
 
 .tags {
     margin-top: 6px;
-    column-gap: 6px;
+    gap: 6px;
     display: flex;
+    flex-wrap: wrap;
     list-style: none;
+    padding-left: 0;
 }
 
 .v-list-item {

@@ -8,7 +8,7 @@
                             v-if="placeholderStore.savedPlaceholders.length">
                             <v-list>
                                 <PlaceholderSavedItem
-                                    v-for="(item, index) in placeholderStore.savedPlaceholders"
+                                    v-for="(item, index) in sortedPlaceholders"
                                     :selected="placeholderStore.selectedSavedGuid === item.guid"
                                     :key="index"
                                     :savedItem="item"
@@ -33,7 +33,7 @@
 <script setup>
     import { EMITS, STORAGE } from '@/constants';
     import { mdiContentCopy } from '@mdi/js';
-    import { ref, watch } from 'vue';
+    import { ref, watch, computed } from 'vue';
     import { usePlaceholderStore } from '@stores/placeholder';
     import PlaceholderSavedItem from '@/components/saved/PlaceholderSavedItem.vue';
     import TextareaField from '@/components/formFields/TextareaField.vue';
@@ -42,6 +42,10 @@
     const placeholderStore = usePlaceholderStore();
 
     const activeItemModel = ref();
+
+    // Computed property to sort placeholders in descending order by timestamp
+    const sortedPlaceholders = computed(() => [...placeholderStore.savedPlaceholders].sort((a, b) => b.timestamp - a.timestamp, // Descending order (newest first)
+    ));
 
     function onItemClick(item) {
         activeItemModel.value = item;
