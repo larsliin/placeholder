@@ -56,7 +56,7 @@
     const calculateStorageSize = () => {
         // Get file type from mimetype
         const fileType = placeholderStore.model.mimetype.split('/')[1];
-        
+
         const imageObject = {
             guid: uuidv4(),
             timestamp: Date.now(),

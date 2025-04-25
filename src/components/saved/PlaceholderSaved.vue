@@ -27,7 +27,7 @@
                             :icon="mdiContentCopy"
                             @click="onCopy($event)" />
                     </template>
-                    
+
                     <!-- Image Preview Section - shown only for image type items -->
                     <template v-else>
                         <div class="placeholder-canvas-wrapper">
@@ -85,15 +85,15 @@
             // Extract width and height from tags
             const widthTag = item.tags.find((tag) => tag.label === 'Width');
             const heightTag = item.tags.find((tag) => tag.label === 'Height');
-            
+
             if (widthTag && widthTag.value) {
                 placeholderStore.model.imageWidth = parseInt(widthTag.value);
             }
-            
+
             if (heightTag && heightTag.value) {
                 placeholderStore.model.imageHeight = parseInt(heightTag.value);
             }
-            
+
             // For backward compatibility with older saved items using Size tag
             if (!widthTag || !heightTag) {
                 const sizeTag = item.tags.find((tag) => tag.label === 'Size');
@@ -155,19 +155,19 @@
                     // Update model properties for the selected image if it's an image type
                     if (isImageType.value && activeItemModel.value) {
                         const item = activeItemModel.value;
-                        
+
                         // Extract width and height from tags
                         const widthTag = item.tags.find((tag) => tag.label === 'Width');
                         const heightTag = item.tags.find((tag) => tag.label === 'Height');
-                        
+
                         if (widthTag && widthTag.value) {
                             placeholderStore.model.imageWidth = parseInt(widthTag.value);
                         }
-                        
+
                         if (heightTag && heightTag.value) {
                             placeholderStore.model.imageHeight = parseInt(heightTag.value);
                         }
-                        
+
                         // For backward compatibility with older saved items using Size tag
                         if (!widthTag || !heightTag) {
                             const sizeTag = item.tags.find((tag) => tag.label === 'Size');
