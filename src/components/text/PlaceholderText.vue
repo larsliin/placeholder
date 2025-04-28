@@ -91,12 +91,9 @@
     import { useDebounce } from '@vueuse/core';
     import { usePlaceholderStore } from '@stores/placeholder';
     import { v4 as uuidv4 } from 'uuid';
-    import { watch, computed, ref, toRaw } from 'vue';
+    import { watch, computed, ref, toRaw, onMounted } from 'vue';
     import TextareaField from '@/components/formFields/textareaField.vue';
     import useEventsBus from '@cmp/eventBus';
-
-    // Auto-generate lorem ipsum on component mount
-    import { onMounted } from 'vue';
 
     const placeholderStore = usePlaceholderStore();
 
