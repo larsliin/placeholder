@@ -8,9 +8,6 @@
                 <canvas ref="thumbnailCanvas" class="thumbnail-canvas"></canvas>
             </div>
         </template>
-        <template v-slot:title>
-            {{ savedItem.text }}
-        </template>
         <template v-slot:subtitle>
             <ul class="tags">
                 <li v-for="(tag, index) in savedItem.tags" :key="index">
