@@ -32,13 +32,23 @@
                     </v-col>
                 </v-row>
                 <v-row>
-                    <v-col>
-                        <v-btn
-                            color="blue-darken-1"
-                            variant="tonal"
-                            @click="onGenerateUrlClick()">
-                            Generate Url
-                        </v-btn>
+                    <v-col cols="12">
+                        <div class="justify-space-between">
+                            <v-btn
+                                color="blue-darken-1"
+                                variant="tonal"
+                                class="px-4 mb-4"
+                                @click="onGenerateLoremClick()">
+                                Generate Lorem Ipsum
+                            </v-btn>
+                            <v-btn
+                                color="blue-darken-1"
+                                variant="tonal"
+                                class="px-4"
+                                @click="onGenerateUrlClick()">
+                                Generate Url
+                            </v-btn>
+                        </div>
                     </v-col>
                 </v-row>
             </v-col>
@@ -47,8 +57,6 @@
                     v-model="output"
                     :icon="mdiContentCopy"
                     :rows="9"
-                    @focus="onTextFieldFocus()"
-                    @blur="onTextFieldFocus()"
                     @click="onCopy($event)" />
             </v-col>
         </v-row>
@@ -86,6 +94,9 @@
     import { watch, computed, ref, toRaw } from 'vue';
     import TextareaField from '@/components/formFields/textareaField.vue';
     import useEventsBus from '@cmp/eventBus';
+
+    // Auto-generate lorem ipsum on component mount
+    import { onMounted } from 'vue';
 
     const placeholderStore = usePlaceholderStore();
 
@@ -151,45 +162,51 @@
     // Creates save object with UUID and timestamp, calculates JSON size for storage limit.
     const kbSize = ref(false);
 
+    function onGenerateLoremClick() {
+        output.value = generateLoremIpsum(
+            placeholderStore.model.body.paragraphCount,
+            placeholderStore.model.body.wordCount,
+            placeholderStore.model.body.prefixLoremIpsum,
+        );
+        placeholderStore.model.body.text = output.value;
+
+        const counter = countWordsAndParagraphs(placeholderStore.model.body.text);
+
+        // update model object
+        placeholderStore.model.body.guid = uuidv4();
+        placeholderStore.model.body.timestamp = Date.now();
+        placeholderStore.model.body.tags = [
+            {
+                label: 'Type',
+                value: STORAGE.TEXT,
+            },
+            {
+                label: 'Paragraphs',
+                value: counter.paragraphCount,
+            },
+            {
+                label: 'Words',
+                value: counter.wordCount,
+            },
+        ];
+
+        // calculate size
+        const jsonString = JSON
+            .stringify(placeholderStore.model.body);
+        const size = new Blob([jsonString]).size / 1024;
+        kbSize.value = Math.round(size * 100) / 100;
+    }
+
+    // Initialize the component with an empty state
     watch(
-        [
-            () => placeholderStore.model.body.prefixLoremIpsum,
-            () => placeholderStore.model.body.paragraphCount,
-            () => placeholderStore.model.body.wordCount,
-        ],
+        [],
         () => {
-            output.value = generateLoremIpsum(
-                placeholderStore.model.body.paragraphCount,
-                placeholderStore.model.body.wordCount,
-                placeholderStore.model.body.prefixLoremIpsum,
-            );
-            placeholderStore.model.body.text = output.value;
-
-            const counter = countWordsAndParagraphs(placeholderStore.model.body.text);
-
-            // update model object
-            placeholderStore.model.body.guid = uuidv4();
-            placeholderStore.model.body.timestamp = Date.now();
-            placeholderStore.model.body.tags = [
-                {
-                    label: 'Type',
-                    value: STORAGE.TEXT,
-                },
-                {
-                    label: 'Paragraphs',
-                    value: counter.paragraphCount,
-                },
-                {
-                    label: 'Words',
-                    value: counter.wordCount,
-                },
-            ];
-
-            // calculate size
-            const jsonString = JSON
-                .stringify(placeholderStore.model.body);
-            const size = new Blob([jsonString]).size / 1024;
-            kbSize.value = Math.round(size * 100) / 100;
+            // Initial empty state setup
+            if (!output.value) {
+                const jsonString = JSON.stringify(placeholderStore.model.body);
+                const size = new Blob([jsonString]).size / 1024;
+                kbSize.value = Math.round(size * 100) / 100;
+            }
         },
         { immediate: true },
     );
@@ -203,6 +220,12 @@
             .then(() => emit(EMITS.COPY, { success: true }))
             .catch(() => emit(EMITS.COPY, { success: false }));
     }
+
+    // Watch for changes in output
+    // Updates the model text property when output changes
+    watch(output, (newVal) => {
+        placeholderStore.model.body.text = newVal;
+    });
 
     // Save Text Click Handler
     // Saves generated text to storage, updates saved items list in storage
@@ -222,9 +245,10 @@
             emit(EMITS.COPY, { success: false });
         }
     }
-    // eslint-disable-next-line
-    function onTextFieldFocus(params) {
-    }
+
+    onMounted(() => {
+        onGenerateLoremClick();
+    });
 </script>
 
 <style scoped lang="scss">

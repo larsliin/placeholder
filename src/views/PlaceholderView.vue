@@ -146,10 +146,18 @@
                 return;
             }
 
-            Promise.all(savedListResp.map((id) => placeholderStore.get_syncStorage(id)))
+            Promise.all(
+                savedListResp.map((id) => {
+                    // Ensure id is valid before trying to get storage
+                    if (!id) return Promise.resolve(null);
+                    return placeholderStore.get_syncStorage(id);
+                }),
+            )
                 .then((results) => {
                     if (results.length) {
-                        const arr = results.sort((a, b) => a.timestamp - b.timestamp);
+                        // Filter out any null results before sorting
+                        const validResults = results.filter((item) => item !== null);
+                        const arr = validResults.sort((a, b) => a.timestamp - b.timestamp);
                         placeholderStore.savedPlaceholders = arr;
                     }
                 })
